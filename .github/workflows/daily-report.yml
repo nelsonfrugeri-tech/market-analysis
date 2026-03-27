@@ -1,0 +1,56 @@
+name: Daily Nu Reserva Report
+
+on:
+  schedule:
+    # 9 AM Brazil Time (UTC-3) = 12 PM UTC
+    # Monday to Friday
+    - cron: '0 12 * * 1-5'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  daily-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Set up environment
+        env:
+          MA_SMTP_USERNAME: ${{ secrets.MA_SMTP_USERNAME }}
+          MA_SMTP_PASSWORD: ${{ secrets.MA_SMTP_PASSWORD }}
+          MA_SMTP_SENDER_EMAIL: ${{ secrets.MA_SMTP_SENDER_EMAIL }}
+          MA_SMTP_HOST: smtp.gmail.com
+          MA_SMTP_PORT: 587
+        run: |
+          cat > .env << EOF
+          MA_SMTP_USERNAME=$MA_SMTP_USERNAME
+          MA_SMTP_PASSWORD=$MA_SMTP_PASSWORD
+          MA_SMTP_SENDER_EMAIL=$MA_SMTP_SENDER_EMAIL
+          MA_SMTP_HOST=smtp.gmail.com
+          MA_SMTP_PORT=587
+          EOF
+
+      - name: Run daily report
+        run: |
+          python test_end_to_end.py --email ${{ secrets.MA_RECIPIENT_EMAIL }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: daily-reports-${{ github.run_number }}
+          path: |
+            reports/
+            *.log
+          retention-days: 30
