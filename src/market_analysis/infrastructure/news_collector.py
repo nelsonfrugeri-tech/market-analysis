@@ -172,10 +172,10 @@ class NewsCollector:
     # Private helpers
     # -----------------------------------------------------------------
 
-    def _get_client(self) -> httpx.AsyncClient | _NoCloseClient:
+    def _get_client(self) -> httpx.AsyncClient | NoCloseClient:
         """Return an httpx client."""
         if self._external_client is not None:
-            return _NoCloseClient(self._external_client)
+            return NoCloseClient(self._external_client)
         return httpx.AsyncClient(
             headers={"User-Agent": "MarketAnalysis/1.0"},
             timeout=self._timeout,
@@ -264,14 +264,3 @@ class NewsCollector:
         return unique
 
 
-class _NoCloseClient:
-    """Wraps an externally-owned httpx.AsyncClient to prevent closing it."""
-
-    def __init__(self, client: httpx.AsyncClient) -> None:
-        self._client = client
-
-    async def __aenter__(self) -> httpx.AsyncClient:
-        return self._client
-
-    async def __aexit__(self, *args: Any) -> None:
-        pass
