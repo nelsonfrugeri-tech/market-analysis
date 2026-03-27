@@ -52,13 +52,13 @@ MA_SMTP_USE_TLS=true
 
 ```bash
 # Teste básico (3 meses de dados)
-python test_end_to_end.py --email nelson@exemplo.com
+python tests/integration/test_end_to_end.py --email nelson@exemplo.com
 
 # Teste com período customizado
-python test_end_to_end.py --email nelson@exemplo.com --months 6
+python tests/integration/test_end_to_end.py --email nelson@exemplo.com --months 6
 
 # Teste com logs detalhados
-python test_end_to_end.py --email nelson@exemplo.com --verbose
+python tests/integration/test_end_to_end.py --email nelson@exemplo.com --verbose
 ```
 
 ### 4. Validar os Resultados

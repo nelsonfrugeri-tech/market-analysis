@@ -32,5 +32,5 @@ Implementar execução automática do relatório diário via GitHub Actions, rod
 ## Referência
 - Documentação local: README_TEAM_HANDOFF.md
 - Código dos collectors: src/collectors/
-- Testes: test_end_to_end.py
+- Testes: tests/integration/test_end_to_end.py
 - Workflow: .github/workflows/daily-report.yml
