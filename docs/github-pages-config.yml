@@ -1,0 +1,9 @@
+title: Sistema de Análise de Fundos Nubank
+description: Documentação de produto para sistema automatizado de análise de investimentos
+remote_theme: just-the-docs/just-the-docs
+color_scheme: light
+url: "https://nelson-frugeri.github.io"
+baseurl: "/market-analysis"
+search_enabled: true
+highlighter: rouge
+markdown: kramdown
