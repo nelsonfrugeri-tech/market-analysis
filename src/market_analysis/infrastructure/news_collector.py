@@ -27,6 +27,7 @@ from market_analysis.domain.models import (
     ValidationResult,
 )
 from market_analysis.domain.schemas import NewsRssEntry
+from market_analysis.infrastructure.shared.http import NoCloseClient
 
 logger = logging.getLogger(__name__)
 

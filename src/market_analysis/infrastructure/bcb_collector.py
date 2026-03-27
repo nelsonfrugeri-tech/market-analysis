@@ -28,6 +28,7 @@ from market_analysis.domain.models import (
     ValidationResult,
 )
 from market_analysis.domain.schemas import BcbApiRecord
+from market_analysis.infrastructure.shared.http import NoCloseClient
 
 logger = logging.getLogger(__name__)
 
@@ -197,7 +198,7 @@ class BCBCollector:
         """Return an httpx client, reusing external one if provided."""
         if self._external_client is not None:
             # Wrap in a no-op context manager for consistency
-            return _NoCloseClient(self._external_client)
+            return NoCloseClient(self._external_client)
         return httpx.AsyncClient(
             headers={"User-Agent": "MarketAnalysis/1.0"},
             timeout=self._timeout,
@@ -314,14 +315,3 @@ class BCBCollector:
             return []
 
 
-class _NoCloseClient:
-    """Wraps an externally-owned httpx.AsyncClient to prevent closing it."""
-
-    def __init__(self, client: httpx.AsyncClient) -> None:
-        self._client = client
-
-    async def __aenter__(self) -> httpx.AsyncClient:
-        return self._client
-
-    async def __aexit__(self, *args: Any) -> None:
-        pass  # Do not close the external client
