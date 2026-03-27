@@ -26,9 +26,10 @@ Investidores precisam acompanhar performance de seus fundos de forma consistente
 ## Documentação
 
 ### Produto e Negócio
-- 📋 **[PRD Completo](prd-sistema-analise-fundos.md)** - Product Requirements Document
-- 🎯 **[User Stories](prd-sistema-analise-fundos.md#user-stories)** - Requisitos funcionais detalhados
-- 📊 **[Métricas de Sucesso](prd-sistema-analise-fundos.md#métricas-de-sucesso)** - KPIs e objetivos
+- 📋 **[PRD - Product Requirements](PRD.md)** - Documento completo de requisitos de produto
+- 👤 **[User Stories](user-stories.md)** - Histórias de usuário com critérios de aceite
+- 🗺️ **[Roadmap](roadmap.md)** - Planejamento Q1-Q4 2026 e marcos
+- 📊 **[Métricas & OKRs](metrics.md)** - Indicadores de sucesso e monitoramento
 
 ### Técnico
 - 🔍 **[Investigação de APIs](../cookbook/API_ANALYSIS_REPORT.md)** - Análise técnica das fontes de dados
@@ -40,7 +41,7 @@ Investidores precisam acompanhar performance de seus fundos de forma consistente
 | Fase | Status | Entregáveis |
 |------|---------|-------------|
 | **Discovery** | ✅ Completo | APIs validadas, viabilidade confirmada |
-| **Documentação** | ✅ Completo | PRD criado, GitHub Pages configurado |
+| **Documentação** | ✅ Completo | PRD, User Stories, Roadmap, Métricas completos |
 | **Issues** | ⏳ Pendente | Criação de backlog estruturado |
 | **Desenvolvimento** | ⏳ Aguardando | Implementação do MVP |
 | **Launch** | ⏳ Planejado | Deploy e primeira execução |

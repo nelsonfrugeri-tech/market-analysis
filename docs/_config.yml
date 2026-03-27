@@ -13,10 +13,16 @@ github_username: "nelson-frugeri"
 
 # Navigation
 nav_links:
-  - title: "PRD Principal"
-    url: "/prd-sistema-analise-fundos"
+  - title: "PRD"
+    url: "/PRD"
+  - title: "User Stories"
+    url: "/user-stories"
+  - title: "Roadmap"
+    url: "/roadmap"
+  - title: "Métricas"
+    url: "/metrics"
   - title: "Investigação APIs"
-    url: "/api-investigation"
+    url: "../cookbook/API_ANALYSIS_REPORT"
 
 # Markdown settings
 markdown: kramdown
