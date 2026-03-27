@@ -62,20 +62,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Performance calculation verification
   - Report generation testing
 
-#### Automation & CI/CD
-- **GitHub Actions Workflow** for daily automation
-  - Scheduled execution at 9 AM Brazil time (Mon-Fri)
-  - Python 3.12 environment with dependency management
-  - GitHub Secrets integration for SMTP credentials
-  - Artifact storage for generated reports (30-day retention)
-  - Manual trigger capability via GitHub UI
-
 #### Command Line Interface
 - **Unified CLI** via `market_analysis.cli` module
   - Configurable analysis periods (--months parameter)
   - Custom output file specification (--output parameter)
   - Email delivery integration (--email parameter)
   - Real-time logging and progress tracking
+
+#### Local macOS Execution
+- **Native macOS support** with Python 3.12+
+- **Local environment configuration** via `.env` files
+- **Manual execution workflow** for development and testing
+- **Integration with macOS system** for file handling and notifications
 
 ### Technical Details
 
@@ -112,22 +110,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Version Control**: Git with semantic versioning
 
 ### Validated Use Cases
-- ✅ **Daily Fund Analysis**: Automated collection and analysis of Nu Reserva Planejada performance
+- ✅ **Daily Fund Analysis**: Manual collection and analysis of Nu Reserva Planejada performance
 - ✅ **Benchmark Comparison**: Real-time comparison against SELIC, CDI, and IPCA indicators
-- ✅ **Automated Reporting**: PDF generation with charts and performance metrics
-- ✅ **Email Delivery**: Scheduled report delivery via SMTP
+- ✅ **Manual Reporting**: PDF generation with charts and performance metrics
+- ✅ **Email Delivery**: On-demand report delivery via SMTP
 - ✅ **Data Persistence**: Historical data storage and retrieval
 - ✅ **News Integration**: Contextual news collection for fund analysis
 
 ### Known Limitations
 - **Single Fund Focus**: Currently optimized for Nu Reserva Planejada analysis
-- **Local Execution**: Primary deployment on local machine (GitHub Actions as future enhancement)
+- **Manual Execution**: Requires manual trigger for analysis and reporting
 - **Brazilian Market Only**: BCB and CVM APIs specific to Brazilian financial market
 - **Email Provider**: Gmail SMTP dependency for automated delivery
 
+### Future Enhancements (Planned for v0.2.0)
+- **GitHub Actions Integration**: Automated daily execution via CI/CD
+- **Scheduled Automation**: Cron-based execution at 9 AM Brazil time
+- **Multi-Fund Support**: Analysis of multiple investment funds
+- **Enhanced Analytics**: Advanced performance metrics and comparisons
+- **Web Dashboard**: Browser-based interface for analysis and reports
+
 ---
 
-**Full System Status**: ✅ **PRODUCTION READY**
+**Full System Status**: ✅ **PRODUCTION READY** (Local Execution)
 **Homologation**: ✅ **PASSED** with real data validation
 **Documentation**: ✅ **COMPLETE** with architecture and usage guides
-**Automation**: ✅ **CONFIGURED** for daily execution
+**Automation**: 🚧 **PLANNED** for next version (GitHub Actions)
