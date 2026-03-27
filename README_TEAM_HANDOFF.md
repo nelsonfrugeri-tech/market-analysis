@@ -80,7 +80,7 @@ class MeuCollector:
 
 Execute o teste de integração:
 ```bash
-python test_schema_integration.py
+python tests/integration/test_schema_integration.py
 ```
 
 Resultado esperado: ✅ Todos os testes passam
