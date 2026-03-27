@@ -1,55 +1,50 @@
-# Sistema de Análise Diária de Fundos de Investimento Nubank
+# Documentation Index
 
-## 📋 Índice da Documentação
+Welcome to the Market Analysis System documentation.
 
-- [**PRD - Requisitos de Produto**](./PRD.md) - Documento principal com problema, solução e especificações
-- [**User Stories**](./user-stories.md) - Histórias do usuário com critérios de aceite
-- [**Roadmap**](./roadmap.md) - Planejamento de entregas e prioridades
-- [**Métricas**](./metrics.md) - Indicadores de sucesso e monitoramento
+## 📚 Available Documents
 
----
+### Product & Business
+- **[PRD - Sistema de Análise de Fundos](prd-sistema-analise-fundos.md)** - Product requirements and business case
+- **[User Stories](user-stories.md)** - Functional requirements and acceptance criteria
+- **[Metrics](metrics.md)** - Business metrics and KPIs
 
-## 🎯 Visão Geral do Projeto
+### Development
+- **[Development Status](development-status.md)** - Current implementation status
+- **[Roadmap](roadmap.md)** - Technical roadmap and milestones
+- **[Testing Guide](testing-guide.md)** - End-to-end testing documentation
+- **[Team Handoff](team-handoff.md)** - Team collaboration guidelines
 
-**Objetivo:** Automatizar a análise diária de investimentos Nubank, fornecendo relatórios comparativos com benchmarks de mercado (SELIC, CDI, IPCA) e notícias relevantes.
+## 🎯 Quick Navigation
 
-**Entrega:** Sistema automatizado que executa às 9h todos os dias úteis, gerando relatório PDF enviado por email.
+**For Product Managers:** Start with [PRD](prd-sistema-analise-fundos.md) and [User Stories](user-stories.md)
 
-**Valor:** Decisões de investimento informadas baseadas em dados oficiais e análises comparativas automatizadas.
+**For Developers:** Check [Development Status](development-status.md) and [Roadmap](roadmap.md)
 
----
+**For QA/Testing:** See [Testing Guide](testing-guide.md)
 
-## 🚀 Status do Projeto
+**For Stakeholders:** Review [Metrics](metrics.md) and current [Roadmap](roadmap.md)
 
-| Fase | Status | Data |
-|------|--------|------|
-| Discovery | ✅ Completo | 27/03/2026 |
-| Documentação | 🔄 Em andamento | 27/03/2026 |
-| Desenvolvimento | ⏳ Aguardando | - |
-| Testes | ⏳ Aguardando | - |
-| Deploy | ⏳ Aguardando | - |
+## 📋 Document Status
 
----
+| Document | Status | Last Updated |
+|----------|--------|--------------|
+| PRD | ✅ Current | March 2026 |
+| User Stories | ✅ Current | March 2026 |
+| Development Status | ⚠️ Needs Update | March 2026 |
+| Roadmap | ✅ Current | March 2026 |
+| Testing Guide | ✅ Current | March 2026 |
+| Metrics | ✅ Current | March 2026 |
 
-## 📊 Resultados da Investigação Técnica
+## 🔄 Maintenance
 
-✅ **Viabilidade confirmada:** 6/8 APIs funcionais
-✅ **Custo:** $0 (APIs oficiais gratuitas)
-✅ **Dados oficiais:** BCB, CVM disponíveis
-✅ **Stack validada:** Python + SQLite + ReportLab
+This documentation is maintained by the development team. For updates or corrections:
 
-**Detalhes técnicos:** Ver [API Analysis Report](../cookbook/API_ANALYSIS_REPORT.md)
-
----
-
-## 🎯 Próximos Passos
-
-1. **Finalizar documentação de negócio** (em andamento)
-2. **Criar issues para desenvolvimento**
-3. **Implementar MVP** (dados BCB + Google News)
-4. **Adicionar dados de fundos CVM**
-5. **Testes e validação**
+1. Create a branch with your changes
+2. Update the relevant document(s)
+3. Open a Pull Request for review
+4. Update the "Last Updated" date in this index
 
 ---
 
-*Última atualização: 27/03/2026*
+**For the main project documentation, see the [root README.md](../README.md)**
