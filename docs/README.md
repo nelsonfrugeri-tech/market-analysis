@@ -1,4 +1,4 @@
-# Sistema de Análise Diária de Fundos de Investimento Nubank
+# Sistema de Análise de Fundos de Investimento Brasileiros
 
 ## 📋 Índice da Documentação
 
@@ -6,12 +6,13 @@
 - [**User Stories**](./user-stories.md) - Histórias do usuário com critérios de aceite
 - [**Roadmap**](./roadmap.md) - Planejamento de entregas e prioridades
 - [**Métricas**](./metrics.md) - Indicadores de sucesso e monitoramento
+- [**Status de Desenvolvimento**](./development-status.md) - Marcos alcançados e próximos passos
 
 ---
 
 ## 🎯 Visão Geral do Projeto
 
-**Objetivo:** Automatizar a análise diária de investimentos Nubank, fornecendo relatórios comparativos com benchmarks de mercado (SELIC, CDI, IPCA) e notícias relevantes.
+**Objetivo:** Automatizar a análise de fundos de investimento brasileiros, fornecendo relatórios comparativos com benchmarks de mercado (SELIC, CDI, IPCA) e notícias relevantes.
 
 **Entrega:** Sistema automatizado que executa às 9h todos os dias úteis, gerando relatório PDF enviado por email.
 
@@ -24,10 +25,10 @@
 | Fase | Status | Data |
 |------|--------|------|
 | Discovery | ✅ Completo | 27/03/2026 |
-| Documentação | 🔄 Em andamento | 27/03/2026 |
-| Desenvolvimento | ⏳ Aguardando | - |
-| Testes | ⏳ Aguardando | - |
-| Deploy | ⏳ Aguardando | - |
+| Documentação | ✅ Completo | 27/03/2026 |
+| Desenvolvimento | ✅ Completo | 27/03/2026 |
+| Testes | ✅ Completo | 27/03/2026 |
+| Deploy | ✅ v0.1.0 Production | 27/03/2026 |
 
 ---
 

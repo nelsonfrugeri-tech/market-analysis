@@ -28,7 +28,7 @@ from market_analysis.domain.models.entities import (
     SystemConfig,
 )
 from market_analysis.domain.models.fund import FundDailyRecord, FundPerformance
-from market_analysis.domain.models.interfaces import BaseCollector
+from market_analysis.domain.interfaces import BaseCollector
 
 __all__ = [
     # Core domain models (authoritative)
