@@ -1,10 +1,10 @@
-# Nu Reserva Planejada - Fund Analysis System
+# Brazilian Investment Fund Analysis System
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Production Ready](https://img.shields.io/badge/status-production%20ready-green.svg)](https://github.com/nelsonfrugeri-tech/market-analysis/releases/tag/v0.1.0)
 [![Local Execution](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
 
-A comprehensive fund analysis system specifically designed for **Nu Reserva Planejada** investment fund analysis. The system automatically collects data from Brazilian financial regulators (CVM, BCB), analyzes performance against benchmarks, and generates professional PDF reports with automated email delivery.
+A comprehensive fund analysis system designed for **Brazilian investment fund** analysis. The system automatically collects data from Brazilian financial regulators (CVM, BCB), analyzes performance against benchmarks, and generates professional PDF reports with automated email delivery.
 
 ## 🎯 Key Features
 
@@ -54,12 +54,14 @@ cp .env.example .env
 Create a `.env` file with the following variables:
 ```env
 # SMTP Configuration for Email Delivery
-MA_SMTP_USERNAME=your.email@gmail.com
-MA_SMTP_PASSWORD=your_app_password
-MA_SMTP_SENDER_EMAIL=your.email@gmail.com
+MA_SMTP_USERNAME=<your_gmail_address>
+MA_SMTP_PASSWORD=<your_gmail_app_password>
+MA_SMTP_SENDER_EMAIL=<your_gmail_address>
 MA_SMTP_HOST=smtp.gmail.com
 MA_SMTP_PORT=587
 ```
+
+> **⚠️ Important**: Replace the placeholder values above with your actual Gmail credentials. Use Gmail App Passwords for authentication.
 
 ### Usage
 ```bash
@@ -114,10 +116,10 @@ python test_schema_integration.py
 
 ## 📊 Current Scope
 
-### Target Fund
-- **Nu Reserva Planejada**
-- **CNPJ**: 43.121.002/0001-41
-- **Focus**: Conservative fixed-income fund analysis
+### Target Fund Configuration
+- **Configurable Fund Analysis**: System supports any Brazilian investment fund via CNPJ
+- **Current Example**: Nu Reserva Planejada (CNPJ: 43.121.002/0001-41)
+- **Fund Types**: Optimized for fixed-income and conservative investment funds
 
 ### Benchmarks
 - **SELIC**: Brazilian central bank rate
