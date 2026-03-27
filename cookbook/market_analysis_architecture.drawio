@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio-mcp" modified="2026-03-27T19:35:32.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram name="market_analysis_architecture" id="2efe62ab01e7">
+    <mxGraphModel dx="1354" dy="981" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#f8f9fa" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="PDF_Generator" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1470" y="940" width="124.0" height="60.0" />
+        </mxCell>
+        <mxCell id="3" value="CVM_Fundos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="50" y="250" width="120.0" height="156" />
+        </mxCell>
+        <mxCell id="4" value="Google_News" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="210" y="250" width="120.0" height="156" />
+        </mxCell>
+        <mxCell id="5" value="Data_Collector" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1470" y="640" width="132.0" height="60.0" />
+        </mxCell>
+        <mxCell id="6" value="Scheduler" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="390" y="250" width="120.0" height="156" />
+        </mxCell>
+        <mxCell id="7" value="Email_Service" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1470" y="1040" width="124.0" height="60.0" />
+        </mxCell>
+        <mxCell id="8" value="Analysis_Engine" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1460" y="840" width="140.0" height="60.0" />
+        </mxCell>
+        <mxCell id="9" value="BCB_CDI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="570" y="250" width="120.0" height="156" />
+        </mxCell>
+        <mxCell id="10" value="BCB_IPCA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="750" y="250" width="120.0" height="156" />
+        </mxCell>
+        <mxCell id="11" value="BCB_SELIC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="930" y="250" width="120.0" height="156" />
+        </mxCell>
+        <mxCell id="12" value="SQLite_DB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1470" y="740" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="13" value="MaisRetorno" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1110" y="250" width="120.0" height="156" />
+        </mxCell>
+        <mxCell id="14" value="9h diário" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="6" target="5">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="450" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="15" value="taxa SELIC" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="11" target="5">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="990" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="16" value="taxa CDI" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="9" target="5">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="630" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="17" value="IPCA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="10" target="5">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="810" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="18" value="notícias" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="4" target="5">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="280" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19" value="fundos dados" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="3" target="5">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="110" y="530" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="20" value="armazena" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="5" target="12">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="21" value="histórico" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="12" target="8">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="22" value="relatório" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="8" target="2">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="23" value="PDF pronto" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="2" target="7">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="24" value="fallback" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="13" target="5">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="25" value="Sistema de Análise de Fundos Nubank" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1290" y="250" width="400" height="156" />
+        </mxCell>
+        <mxCell id="26" value="Arquitetura Estado da Arte - APIs Oficiais + Pipeline Automatizado" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="1750" y="250" width="400" height="156" />
+        </mxCell>
+        <mxCell id="27" value="Componentes do Sistema" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#ffffff;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#666666;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="2230" y="50" width="200" height="156" />
+        </mxCell>
+        <mxCell id="28" value="APIs Oficiais" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#E3F2FD;strokeColor=#1976D2;html=1;" parent="27" vertex="1">
+          <mxGeometry as="geometry" x="0" y="-80" width="200" height="26" />
+        </mxCell>
+        <mxCell id="29" value="Processamento" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#F3E5F5;strokeColor=#7B1FA2;html=1;" parent="27" vertex="1">
+          <mxGeometry as="geometry" x="0" y="-10" width="200" height="26" />
+        </mxCell>
+        <mxCell id="30" value="Dados/Storage" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#E8F5E8;strokeColor=#388E3C;html=1;" parent="27" vertex="1">
+          <mxGeometry as="geometry" x="0" y="440" width="200" height="26" />
+        </mxCell>
+        <mxCell id="31" value="Scheduler" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#FFF3E0;strokeColor=#F57C00;html=1;" parent="27" vertex="1">
+          <mxGeometry as="geometry" x="0" y="510" width="200" height="26" />
+        </mxCell>
+        <mxCell id="32" value="Fallback/Scraping" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#FFEBEE;strokeColor=#D32F2F;html=1;" parent="27" vertex="1">
+          <mxGeometry as="geometry" x="0" y="580" width="200" height="26" />
+        </mxCell>
+        <mxCell id="33" value="&lt;b&gt;Características:&lt;/b&gt;&lt;br/&gt;• Custo: $0 (APIs gratuitas)&lt;br/&gt;• Dados oficiais: BCB + CVM&lt;br/&gt;• Execução: Diária às 9h&lt;br/&gt;• Fallback: MaisRetorno&lt;br/&gt;• Stack: Python + SQLite" style="fillColor=#FFFACD;strokeColor=#DDD;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="2210" y="250" width="250" height="156" />
+        </mxCell>
+        <mxCell id="34" value="&lt;b&gt;APIs Validadas:&lt;/b&gt;&lt;br/&gt;✅ BCB SELIC/CDI&lt;br/&gt;✅ BCB IPCA&lt;br/&gt;✅ Google News RSS&lt;br/&gt;✅ CVM Fundos&lt;br/&gt;⚠️ MaisRetorno (scraping)" style="fillColor=#F0FFF0;strokeColor=#DDD;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="2780" y="250" width="220" height="156" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
