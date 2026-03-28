@@ -12,6 +12,7 @@ from market_analysis.application.performance import (
     determine_trend,
 )
 from market_analysis.domain.models.fund import FundDailyRecord
+from market_analysis.infrastructure.benchmarks import BenchmarkData
 
 
 # -- Fixtures --
@@ -158,7 +159,10 @@ class TestDetermineTrend:
 
 class TestComputePerformance:
     def test_basic_computation(self, sample_records: list[FundDailyRecord]) -> None:
-        benchmarks = {"selic": 0.05, "cdi": 0.04, "ipca": 0.03}
+        benchmarks = BenchmarkData(
+            date_range=(date(2026, 1, 2), date(2026, 1, 6)),
+            selic_accumulated=0.05, cdi_accumulated=0.04, ipca_accumulated=0.03,
+        )
         perf = compute_performance(sample_records, benchmarks)
 
         assert perf.fund_cnpj == "43.121.002/0001-41"
@@ -169,13 +173,15 @@ class TestComputePerformance:
         assert perf.vs_cdi == pytest.approx(perf.return_pct - 0.04, abs=0.01)
 
     def test_empty_records_raises(self) -> None:
+        benchmarks = BenchmarkData(date_range=(date(2026, 1, 1), date(2026, 1, 31)))
         with pytest.raises(ValueError, match="empty records"):
-            compute_performance([], {"selic": 0, "cdi": 0, "ipca": 0})
+            compute_performance([], benchmarks)
 
     def test_missing_benchmarks_default_zero(
         self, sample_records: list[FundDailyRecord]
     ) -> None:
-        perf = compute_performance(sample_records, {})
+        benchmarks = BenchmarkData(date_range=(date(2026, 1, 2), date(2026, 1, 6)))
+        perf = compute_performance(sample_records, benchmarks)
         assert perf.benchmark_selic == 0.0
         assert perf.benchmark_cdi == 0.0
         assert perf.benchmark_ipca == 0.0
@@ -183,7 +189,6 @@ class TestComputePerformance:
     def test_daily_records_included(
         self, sample_records: list[FundDailyRecord]
     ) -> None:
-        perf = compute_performance(
-            sample_records, {"selic": 0, "cdi": 0, "ipca": 0}
-        )
+        benchmarks = BenchmarkData(date_range=(date(2026, 1, 2), date(2026, 1, 6)))
+        perf = compute_performance(sample_records, benchmarks)
         assert len(perf.daily_records) == 3

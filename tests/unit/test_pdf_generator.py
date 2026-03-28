@@ -69,6 +69,11 @@ def sample_performance() -> FundPerformance:
         vs_cdi=0.0302,
         vs_ipca=0.0802,
         trend_30d="up",
+        sharpe_ratio=0.15,
+        alpha=0.02,
+        beta=0.95,
+        var_95=-1.2,
+        max_drawdown=-0.05,
         daily_records=records,
     )
 
@@ -95,6 +100,11 @@ def sample_performance_no_records() -> FundPerformance:
         vs_cdi=0.0302,
         vs_ipca=0.0802,
         trend_30d="flat",
+        sharpe_ratio=0.0,
+        alpha=0.0,
+        beta=1.0,
+        var_95=0.0,
+        max_drawdown=0.0,
         daily_records=[],
     )
 
