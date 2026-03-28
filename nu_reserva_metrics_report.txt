@@ -1,0 +1,48 @@
+
+RELATORIO DE METRICAS - Nu Reserva Planejada
+=======================================================
+
+PERFORMANCE BASICA
+------------------------
+* Periodo: 2024-01-01 a 2024-04-29
+* Retorno: 3.65% (vs CDI: -0.65%)
+* Volatilidade: 0.22%
+* Tendencia 30d: up
+
+METRICAS AVANCADAS
+------------------------
+* Sharpe Ratio: -2.876
+* Alpha: -1.21%
+* Beta: 0.100
+* VaR 95%: 0.05%
+
+EXPLICACOES EDUCACIONAIS
+----------------------------
+
+[RISK] Indice Sharpe (via static)
+O Indice Sharpe de 1,2 indica boa relacao entre retorno e risco.
+Significa que para cada unidade de risco, o fundo entregou 1,2
+unidades de retorno acima do CDI. Valores acima de 1,0 sao
+considerados bons no mercado brasileiro.
+------------------------------------------------------------
+
+[RISK] VaR 95% (via static)
+O VaR 95% de -0,8% significa que em 95% dos meses a perda nao
+passa de 0,8%. Em dinheiro: com R$ 10.000, voce dificilmente
+perde mais de R$ 80 em um mes. Em apenas 5% dos meses a perda
+pode ser maior.
+------------------------------------------------------------
+
+[EFFICIENCY] Alpha (via static)
+O Alpha de 0,8% significa que o gestor do fundo conseguiu entregar
+0,8% a mais do que seria esperado. Esse retorno extra vem das
+decisoes de investimento do gestor. Alpha positivo e sinal de
+boa gestao.
+------------------------------------------------------------
+
+[EFFICIENCY] Beta (via static)
+O Beta de 0,95 indica que o fundo acompanha de perto o CDI,
+com leve tendencia a variar menos. Na pratica, quando o CDI
+sobe 1%, o fundo tende a subir 0,95%. E um comportamento
+tipico de fundo conservador.
+------------------------------------------------------------
