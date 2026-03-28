@@ -11,6 +11,7 @@ Usage: python validate_phase1_system.py [--verbose]
 """
 
 import logging
+import os
 import sys
 import time
 from datetime import date, timedelta
@@ -227,25 +228,22 @@ def validate_fallback_mechanisms() -> bool:
 
     try:
         # Test LLM fallback (force no API key to trigger fallback)
-        import os
-        original_key = os.getenv("ANTHROPIC_API_KEY")
-        if original_key:
-            del os.environ["ANTHROPIC_API_KEY"]  # Temporarily remove
+        # Use unittest.mock.patch.dict to safely manipulate env vars
+        # This guarantees restoration even if an exception occurs
+        import unittest.mock
 
-        explainer = MetricsExplainer()  # Will create with no API key
+        env_without_key = {k: v for k, v in os.environ.items() if k != "ANTHROPIC_API_KEY"}
+        with unittest.mock.patch.dict(os.environ, env_without_key, clear=True):
+            explainer = MetricsExplainer()  # Will create with no API key
 
-        explanation = explainer.explain_metric("sharpe_ratio", 1.5, {
-            "fund_return": 12.5,
-            "cdi_return": 10.2
-        })
+            explanation = explainer.explain_metric("sharpe_ratio", 1.5, {
+                "fund_return": 12.5,
+                "cdi_return": 10.2
+            })
 
-        assert explanation is not None, "Should provide fallback explanation"
-        assert len(explanation) > 0, "Fallback explanation should not be empty"
-        assert "Sharpe Ratio" in explanation, "Should mention the metric name"
-
-        # Restore original API key
-        if original_key:
-            os.environ["ANTHROPIC_API_KEY"] = original_key
+            assert explanation is not None, "Should provide fallback explanation"
+            assert len(explanation) > 0, "Fallback explanation should not be empty"
+            assert "Sharpe Ratio" in explanation, "Should mention the metric name"
 
         logging.info("✅ Fallback mechanisms validation passed")
         logging.info(f"   Fallback explanation: {explanation[:100]}...")
