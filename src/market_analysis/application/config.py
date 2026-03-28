@@ -51,6 +51,12 @@ class AppSettings(BaseSettings):
     smtp_use_tls: bool = Field(default=True)
     smtp_sender_email: str = Field(default="")
 
+    # --- PDF ---
+    pdf_metrics_explained: bool = Field(
+        default=True,
+        description="Include educational 'Metrics Explained' section in PDF reports",
+    )
+
     # --- Logging ---
     log_level: str = Field(default="INFO")
 

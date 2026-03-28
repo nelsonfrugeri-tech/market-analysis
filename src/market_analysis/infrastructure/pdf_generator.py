@@ -6,6 +6,7 @@ Generates a professional fund analysis report with:
 - NAV evolution chart
 - Equity evolution chart
 - Benchmark comparison
+- Metrics Explained educational section (optional, Issue #64)
 - News section
 """
 
@@ -29,7 +30,9 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import cm, mm
 from reportlab.platypus import (
+    HRFlowable,
     Image,
+    KeepTogether,
     Paragraph,
     SimpleDocTemplate,
     Spacer,
@@ -48,6 +51,203 @@ DARK_GRAY = "#333333"
 LIGHT_GRAY = "#F5F5F5"
 GREEN = "#27AE60"
 RED = "#E74C3C"
+BLUE = "#2980B9"
+WARM_GRAY = "#7F8C8D"
+
+# Category display metadata for the explained metrics section
+_CATEGORY_LABELS: dict[str, tuple[str, str]] = {
+    "performance": ("Desempenho", "#27AE60"),
+    "risk": ("Risco", "#E74C3C"),
+    "efficiency": ("Eficiencia", "#2980B9"),
+    "consistency": ("Consistencia", "#F39C12"),
+}
+
+
+# ---------------------------------------------------------------------------
+# Metrics Explained section builder (Issue #64)
+# ---------------------------------------------------------------------------
+
+
+def _build_explained_metrics_section(
+    explanations: list[Any],
+    styles: Any,
+) -> list[Any]:
+    """Build the 'Metrics Explained' educational section.
+
+    Groups explanations by category and renders each as a visual card
+    with display name, glossary term, and educational text.
+
+    Args:
+        explanations: List of ExplanationResult from MetricsExplainer.
+        styles: ReportLab stylesheet (getSampleStyleSheet result).
+
+    Returns:
+        List of ReportLab flowable elements.
+    """
+    elements: list[Any] = []
+
+    # Section header
+    section_title = ParagraphStyle(
+        "ExplainedTitle",
+        parent=styles["Heading1"],
+        fontSize=15,
+        textColor=colors.HexColor(NUBANK_PURPLE),
+        spaceBefore=24,
+        spaceAfter=4,
+    )
+    section_intro = ParagraphStyle(
+        "ExplainedIntro",
+        parent=styles["Normal"],
+        fontSize=9,
+        textColor=colors.HexColor(WARM_GRAY),
+        leading=12,
+        spaceAfter=12,
+    )
+    category_style = ParagraphStyle(
+        "CategoryHeader",
+        parent=styles["Heading3"],
+        fontSize=11,
+        textColor=colors.white,
+        spaceBefore=12,
+        spaceAfter=6,
+    )
+    metric_name_style = ParagraphStyle(
+        "MetricName",
+        parent=styles["Normal"],
+        fontSize=10,
+        fontName="Helvetica-Bold",
+        textColor=colors.HexColor(DARK_GRAY),
+        spaceBefore=4,
+        spaceAfter=2,
+    )
+    glossary_style = ParagraphStyle(
+        "GlossaryTerm",
+        parent=styles["Normal"],
+        fontSize=8,
+        fontName="Helvetica-Oblique",
+        textColor=colors.HexColor(WARM_GRAY),
+        leading=10,
+        spaceAfter=4,
+    )
+    explanation_style = ParagraphStyle(
+        "ExplanationText",
+        parent=styles["Normal"],
+        fontSize=9,
+        textColor=colors.HexColor(DARK_GRAY),
+        leading=13,
+        spaceAfter=2,
+    )
+    analogy_style = ParagraphStyle(
+        "AnalogyText",
+        parent=styles["Normal"],
+        fontSize=8,
+        fontName="Helvetica-Oblique",
+        textColor=colors.HexColor(BLUE),
+        leading=11,
+        leftIndent=12,
+        spaceAfter=6,
+    )
+    provider_style = ParagraphStyle(
+        "ProviderBadge",
+        parent=styles["Normal"],
+        fontSize=6,
+        textColor=colors.HexColor("#AAAAAA"),
+        alignment=2,  # right-aligned
+    )
+
+    elements.append(
+        Paragraph("Metricas Explicadas — Guia do Investidor", section_title)
+    )
+    elements.append(
+        Paragraph(
+            "As metricas abaixo sao explicadas em linguagem simples para ajudar "
+            "na compreensao do desempenho do fundo. Nenhuma informacao aqui "
+            "constitui recomendacao de investimento.",
+            section_intro,
+        )
+    )
+
+    # Group by category (explanations should already be sorted by category)
+    grouped: dict[str, list[Any]] = {}
+    for exp in explanations:
+        grouped.setdefault(exp.category, []).append(exp)
+
+    # Render in canonical order
+    for cat_key in ("performance", "risk", "efficiency", "consistency"):
+        items = grouped.get(cat_key)
+        if not items:
+            continue
+
+        cat_label, cat_color = _CATEGORY_LABELS.get(cat_key, (cat_key, DARK_GRAY))
+
+        # Category banner
+        cat_banner_data = [[Paragraph(cat_label, category_style)]]
+        cat_banner = Table(cat_banner_data, colWidths=[16 * cm])
+        cat_banner.setStyle(
+            TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor(cat_color)),
+                    ("TOPPADDING", (0, 0), (-1, -1), 4),
+                    ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+                    ("LEFTPADDING", (0, 0), (-1, -1), 8),
+                ]
+            )
+        )
+        elements.append(cat_banner)
+        elements.append(Spacer(1, 4))
+
+        for exp in items:
+            card_elements: list[Any] = []
+
+            # Metric display name
+            card_elements.append(
+                Paragraph(exp.display_name, metric_name_style)
+            )
+
+            # Glossary term (if available via template registry)
+            glossary = getattr(exp, "glossary_term", "")
+            if glossary:
+                card_elements.append(Paragraph(glossary, glossary_style))
+
+            # Main explanation text
+            card_elements.append(Paragraph(exp.text, explanation_style))
+
+            # Analogy (if available)
+            analogy = getattr(exp, "analogy", "")
+            if analogy:
+                card_elements.append(
+                    Paragraph(f"Analogia: {analogy}", analogy_style)
+                )
+
+            # Provider badge (discrete)
+            provider_label = {
+                "anthropic": "via Claude AI",
+                "ollama": "via Ollama",
+                "static": "texto padrao",
+                "cache": "em cache",
+            }.get(exp.provider, exp.provider)
+            card_elements.append(Paragraph(provider_label, provider_style))
+
+            # Separator
+            card_elements.append(
+                HRFlowable(
+                    width="100%",
+                    thickness=0.5,
+                    color=colors.HexColor("#EEEEEE"),
+                    spaceAfter=4,
+                    spaceBefore=2,
+                )
+            )
+
+            # KeepTogether prevents page break in the middle of a card
+            elements.append(KeepTogether(card_elements))
+
+    return elements
+
+
+# ---------------------------------------------------------------------------
+# Chart builders
+# ---------------------------------------------------------------------------
 
 
 def _create_nav_chart(records: list[FundDailyRecord]) -> bytes:
@@ -134,6 +334,11 @@ def _create_benchmark_chart(performance: FundPerformance) -> bytes:
     return buf.read()
 
 
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+
 def _trend_arrow(trend: str) -> str:
     """Return unicode arrow for trend direction."""
     if trend == "up":
@@ -148,10 +353,16 @@ def _format_brl(value: float) -> str:
     return f"R$ {value:,.2f}"
 
 
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
+
 def generate_pdf(
     performance: FundPerformance,
     news: list[NewsItem] | None = None,
     output_path: str | Path | None = None,
+    metric_explanations: list[Any] | None = None,
 ) -> Path:
     """Generate a PDF report for the fund analysis.
 
@@ -159,6 +370,8 @@ def generate_pdf(
         performance: Computed fund performance metrics.
         news: Optional list of news items to include.
         output_path: Path for the output PDF. Defaults to ./reports/report_YYYYMMDD.pdf.
+        metric_explanations: Optional list of ExplanationResult from MetricsExplainer.
+            When provided, adds an educational 'Metrics Explained' section.
 
     Returns:
         Path to the generated PDF file.
@@ -364,6 +577,13 @@ def generate_pdf(
         bench_img_path.flush()
         elements.append(Image(bench_img_path.name, width=16 * cm, height=6 * cm))
 
+    # -- Metrics Explained Section (Issue #64) --
+    if metric_explanations:
+        explained_elements = _build_explained_metrics_section(
+            metric_explanations, styles
+        )
+        elements.extend(explained_elements)
+
     # -- News Section --
     if news:
         elements.append(Paragraph("Recent News", section_style))
@@ -404,6 +624,7 @@ def generate_pdf(
 def generate_pdf_bytes(
     performance: FundPerformance,
     news: list[NewsItem] | None = None,
+    metric_explanations: list[Any] | None = None,
 ) -> bytes:
     """Generate a PDF report and return it as raw bytes.
 
@@ -413,6 +634,7 @@ def generate_pdf_bytes(
     Args:
         performance: Computed fund performance metrics.
         news: Optional list of news items to include.
+        metric_explanations: Optional list of ExplanationResult from MetricsExplainer.
 
     Returns:
         PDF file content as bytes.
@@ -427,7 +649,7 @@ def generate_pdf_bytes(
         bottomMargin=1.5 * cm,
     )
 
-    elements = _build_elements(performance, news)
+    elements = _build_elements(performance, news, metric_explanations)
     doc.build(elements)
     return buf.getvalue()
 
@@ -435,6 +657,7 @@ def generate_pdf_bytes(
 def _build_elements(
     performance: FundPerformance,
     news: list[NewsItem] | None = None,
+    metric_explanations: list[Any] | None = None,
 ) -> list[Any]:
     """Build the list of ReportLab flowable elements for the PDF.
 
@@ -632,6 +855,13 @@ def _build_elements(
             Image(bench_img_path.name, width=16 * cm, height=6 * cm)
         )
 
+    # -- Metrics Explained Section (Issue #64) --
+    if metric_explanations:
+        explained_elements = _build_explained_metrics_section(
+            metric_explanations, styles
+        )
+        elements.extend(explained_elements)
+
     # -- News Section --
     if news:
         elements.append(Paragraph("Recent News", section_style))
@@ -674,14 +904,20 @@ class AsyncPDFReportGenerator:
     Accepts the domain PerformanceReport from domain/models.py.
     """
 
-    async def generate(self, performance: FundPerformance, news: list[NewsItem] | None = None) -> bytes:
+    async def generate(
+        self,
+        performance: FundPerformance,
+        news: list[NewsItem] | None = None,
+        metric_explanations: list[Any] | None = None,
+    ) -> bytes:
         """Generate a PDF report and return as bytes.
 
         Args:
             performance: Fund performance metrics.
             news: Optional news items.
+            metric_explanations: Optional list of ExplanationResult.
 
         Returns:
             PDF content as bytes.
         """
-        return generate_pdf_bytes(performance, news)
+        return generate_pdf_bytes(performance, news, metric_explanations)
