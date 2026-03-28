@@ -1,0 +1,607 @@
+# Educational Prompt Templates for Financial Metrics
+# Consumed by TemplateRegistry -> MetricsExplainer (Issue #60)
+#
+# Placeholders available in user_template:
+#   {value}       - metric value
+#   {fund_name}   - fund display name
+#   {period}      - analysis period description
+#   {benchmark}   - benchmark name (CDI, SELIC, etc.)
+#   {bench_value} - benchmark value for comparison
+#   {investment}  - example investment amount in R$
+#   {result}      - calculated result in R$ (for concrete examples)
+
+system_prompt: |
+  Voce e um educador financeiro brasileiro. Seu objetivo e explicar metricas
+  de investimento para pessoas sem conhecimento tecnico.
+
+  Regras:
+  - Linguagem simples, conversacional, em portugues brasileiro
+  - Nunca faca recomendacoes de compra ou venda
+  - Use exemplos concretos em Reais quando possivel
+  - Frases curtas (maximo 20 palavras cada)
+  - Maximo {max_words} palavras por explicacao
+  - Estrutura: O que e + Como interpretar + Contexto + Proximo passo educativo
+  - Compare sempre com referencias conhecidas: CDI, poupanca, inflacao
+  - Tom: amigavel, educativo, sem ser condescendente
+
+  Benchmarks brasileiros:
+  - CDI: taxa base do mercado, referencia para renda fixa
+  - SELIC: taxa basica de juros definida pelo Banco Central
+  - Poupanca: referencia popular, geralmente rende menos que CDI
+  - IPCA: indice de inflacao, protecao do poder de compra
+  - CDB: alternativa bancaria de renda fixa
+
+templates:
+  # =========================================================================
+  # PERFORMANCE
+  # =========================================================================
+
+  - category: performance
+    metric_name: cumulative_return
+    display_name: Retorno Acumulado
+    priority: 1
+    unit: "%"
+    glossary_term: >
+      Quanto o fundo rendeu no total desde o inicio do periodo analisado.
+    analogy: >
+      E como olhar o placar final de um jogo: mostra o resultado total,
+      nao como foi cada jogada.
+    user_template: |
+      O fundo {fund_name} teve retorno acumulado de {value}% no periodo {period}.
+      No mesmo periodo, o {benchmark} rendeu {bench_value}%.
+      Se alguem tivesse investido R$ {investment}, teria hoje R$ {result}.
+
+      Explique esse retorno de forma simples, comparando com o {benchmark}.
+    interpretation_scale:
+      negativo: "< 0%"
+      abaixo_do_cdi: "0% a CDI"
+      em_linha: "CDI +/- 0.5%"
+      acima_do_cdi: "> CDI + 0.5%"
+    example_output: |
+      O fundo rendeu 12,5% no periodo. Isso significa que R$ 10.000
+      investidos teriam virado R$ 11.250. No mesmo periodo, o CDI rendeu
+      11,0%. Ou seja, o fundo superou a referencia do mercado em 1,5
+      pontos percentuais. Em termos praticos, isso equivale a R$ 150 a
+      mais do que se o dinheiro estivesse em um investimento atrelado ao CDI.
+    max_words: 120
+
+  - category: performance
+    metric_name: ytd_return
+    display_name: Retorno no Ano (YTD)
+    priority: 2
+    unit: "%"
+    glossary_term: >
+      Quanto o fundo rendeu desde 1o de janeiro do ano atual.
+    analogy: >
+      Como o boletim parcial do ano escolar: mostra o desempenho ate agora,
+      mas o ano ainda nao acabou.
+    user_template: |
+      O fundo {fund_name} acumula retorno de {value}% no ano ate agora.
+      O {benchmark} rendeu {bench_value}% no mesmo periodo.
+      Em R$: investimento de R$ {investment} estaria valendo R$ {result}.
+
+      Explique o desempenho no ano, comparando com {benchmark}.
+    interpretation_scale:
+      negativo: "< 0%"
+      fraco: "0% a 50% do CDI"
+      medio: "50% a 100% do CDI"
+      bom: "100% a 120% do CDI"
+      excelente: "> 120% do CDI"
+    example_output: |
+      Ate agora neste ano, o fundo rendeu 8,3%. Em dinheiro: quem
+      investiu R$ 10.000 em janeiro tem R$ 10.830 hoje. No mesmo
+      periodo, o CDI rendeu 7,1%. O fundo esta rendendo 117% do CDI,
+      o que e um desempenho acima da media do mercado.
+    max_words: 100
+
+  - category: performance
+    metric_name: twelve_month_return
+    display_name: Retorno 12 Meses
+    priority: 3
+    unit: "%"
+    glossary_term: >
+      Quanto o fundo rendeu nos ultimos 12 meses.
+    analogy: >
+      Como olhar o rendimento do ultimo ano completo do seu trabalho.
+    user_template: |
+      O fundo {fund_name} rendeu {value}% nos ultimos 12 meses.
+      O {benchmark} rendeu {bench_value}% no mesmo periodo.
+
+      Explique esse retorno de 12 meses de forma simples.
+    interpretation_scale:
+      negativo: "< 0%"
+      abaixo_do_cdi: "0% a CDI"
+      em_linha: "CDI +/- 0.5%"
+      acima_do_cdi: "> CDI + 0.5%"
+    example_output: |
+      Nos ultimos 12 meses, o fundo rendeu 13,2%. Nesse mesmo periodo,
+      o CDI rendeu 12,4%. O fundo entregou um retorno levemente acima
+      da referencia. Esse horizonte de 1 ano ajuda a ver a tendencia
+      mais recente do fundo.
+    max_words: 100
+
+  - category: performance
+    metric_name: six_month_return
+    display_name: Retorno 6 Meses
+    priority: 4
+    unit: "%"
+    glossary_term: >
+      Quanto o fundo rendeu nos ultimos 6 meses.
+    analogy: >
+      Uma foto de meio caminho: mostra a tendencia recente sem ser
+      influenciada demais por um unico mes.
+    user_template: |
+      O fundo {fund_name} rendeu {value}% nos ultimos 6 meses.
+      O {benchmark} rendeu {bench_value}% no mesmo periodo.
+
+      Explique esse retorno de 6 meses.
+    interpretation_scale:
+      abaixo: "< CDI do periodo"
+      em_linha: "CDI +/- 0.3%"
+      acima: "> CDI + 0.3%"
+    example_output: |
+      Nos ultimos 6 meses, o fundo rendeu 6,1% contra 5,8% do CDI.
+      O fundo esta ligeiramente acima da referencia. Esse prazo de
+      6 meses ajuda a identificar tendencias recentes.
+    max_words: 80
+
+  - category: performance
+    metric_name: three_month_return
+    display_name: Retorno 3 Meses
+    priority: 5
+    unit: "%"
+    glossary_term: >
+      Quanto o fundo rendeu nos ultimos 3 meses.
+    analogy: >
+      Uma foto instantanea do momento: mostra o desempenho mais recente.
+    user_template: |
+      O fundo {fund_name} rendeu {value}% nos ultimos 3 meses.
+      O {benchmark} rendeu {bench_value}% no mesmo periodo.
+
+      Explique esse retorno de curto prazo.
+    interpretation_scale:
+      abaixo: "< CDI do periodo"
+      em_linha: "CDI +/- 0.2%"
+      acima: "> CDI + 0.2%"
+    example_output: |
+      Nos ultimos 3 meses, o fundo rendeu 3,1% contra 2,9% do CDI.
+      No curto prazo, o fundo acompanha de perto a referencia.
+    max_words: 80
+
+  - category: performance
+    metric_name: monthly_avg_return
+    display_name: Retorno Medio Mensal
+    priority: 6
+    unit: "%"
+    glossary_term: >
+      A media de rendimento por mes no periodo analisado.
+    analogy: >
+      Como a media de gols por partida de um time: da uma ideia do
+      ritmo normal, mas alguns meses sao melhores e outros piores.
+    user_template: |
+      O fundo {fund_name} teve retorno medio mensal de {value}%.
+      O {benchmark} teve media mensal de {bench_value}%.
+
+      Explique o que esse retorno medio mensal significa na pratica.
+    interpretation_scale:
+      baixo: "< 0.5%"
+      medio: "0.5% a 1.0%"
+      alto: "> 1.0%"
+    example_output: |
+      Em media, o fundo rende 0,95% ao mes. Isso equivale a cerca de
+      R$ 95 por mes para cada R$ 10.000 investidos. Lembre-se: e uma
+      media. Alguns meses rendem mais, outros menos.
+    max_words: 80
+
+  # =========================================================================
+  # RISK
+  # =========================================================================
+
+  - category: risk
+    metric_name: volatility
+    display_name: Volatilidade
+    priority: 1
+    unit: "%"
+    glossary_term: >
+      Quanto o rendimento do fundo varia de um periodo para outro.
+      Mais volatilidade = mais incerteza.
+    analogy: >
+      E como a diferenca entre um voo tranquilo e um com turbulencia.
+      O aviao chega ao destino nos dois casos, mas a experiencia e bem diferente.
+    user_template: |
+      O fundo {fund_name} tem volatilidade de {value}%.
+      O {benchmark} tem volatilidade de {bench_value}%.
+
+      Explique o que essa volatilidade significa para o investidor.
+    interpretation_scale:
+      baixa: "< 1%"
+      moderada: "1% a 3%"
+      alta: "3% a 10%"
+      muito_alta: "> 10%"
+    example_output: |
+      A volatilidade de 0,8% indica que o fundo e bastante estavel.
+      Isso e comum em fundos de renda fixa. Na pratica, o rendimento
+      mensal varia pouco: se a media e 1%, o retorno real fica
+      geralmente entre 0,2% e 1,8%.
+    max_words: 100
+
+  - category: risk
+    metric_name: max_drawdown
+    display_name: Maior Queda (Max Drawdown)
+    priority: 2
+    unit: "%"
+    glossary_term: >
+      A maior queda que o fundo ja sofreu do ponto mais alto ate o mais baixo.
+    analogy: >
+      Imagine uma montanha-russa: o drawdown e a maior descida.
+      Mostra o pior momento que o investidor ja enfrentou.
+    user_template: |
+      O fundo {fund_name} teve queda maxima (drawdown) de {value}%.
+      Em R$: quem tinha R$ {investment} chegou a ver R$ {result} na pior fase.
+
+      Explique o que esse drawdown significa e como interpretar.
+    interpretation_scale:
+      minimo: "> -1%"
+      moderado: "-1% a -5%"
+      significativo: "-5% a -15%"
+      severo: "< -15%"
+    example_output: |
+      A maior queda historica desse fundo foi de -2,3%. Em dinheiro:
+      quem tinha R$ 10.000 chegou a ver R$ 9.770 na pior fase.
+      Para um fundo de renda fixa, essa queda e considerada moderada.
+      Importante: apos essa queda, o fundo se recuperou.
+    max_words: 120
+
+  - category: risk
+    metric_name: sharpe_ratio
+    display_name: Indice Sharpe
+    priority: 3
+    unit: ""
+    glossary_term: >
+      Mede se o retorno acima do CDI compensa o risco assumido.
+      Quanto maior, melhor a relacao retorno/risco.
+    analogy: >
+      E como avaliar o custo-beneficio de um produto: nao basta ser
+      bom (retorno), precisa valer o preco (risco).
+    user_template: |
+      O fundo {fund_name} tem Indice Sharpe de {value}.
+      Retorno do fundo: {bench_value}%. CDI no periodo: {benchmark}%.
+
+      Explique o que esse Sharpe significa na relacao risco-retorno.
+    interpretation_scale:
+      ruim: "< 0"
+      baixo: "0 a 0.5"
+      bom: "0.5 a 1.0"
+      muito_bom: "1.0 a 2.0"
+      excelente: "> 2.0"
+    example_output: |
+      O Indice Sharpe de 1,2 indica boa relacao entre retorno e risco.
+      Significa que para cada unidade de risco, o fundo entregou 1,2
+      unidades de retorno acima do CDI. Valores acima de 1,0 sao
+      considerados bons no mercado brasileiro.
+    max_words: 100
+
+  - category: risk
+    metric_name: sortino_ratio
+    display_name: Indice Sortino
+    priority: 4
+    unit: ""
+    glossary_term: >
+      Parecido com o Sharpe, mas so considera as quedas (nao a volatilidade
+      para cima). Foca no risco que realmente incomoda o investidor.
+    analogy: >
+      Se o Sharpe avalia o voo inteiro (turbulencia pra cima e pra baixo),
+      o Sortino so conta os solavancos pra baixo, que sao os que preocupam.
+    user_template: |
+      O fundo {fund_name} tem Indice Sortino de {value}.
+      Retorno do fundo: {bench_value}%. CDI no periodo: {benchmark}%.
+
+      Explique o Sortino e como ele complementa o Sharpe.
+    interpretation_scale:
+      ruim: "< 0"
+      baixo: "0 a 1.0"
+      bom: "1.0 a 2.0"
+      excelente: "> 2.0"
+    example_output: |
+      O Sortino de 1,8 avalia o retorno considerando apenas os riscos
+      de queda. E mais generoso que o Sharpe porque ignora a volatilidade
+      positiva. Para este fundo, indica que as quedas sao poucas em
+      relacao ao retorno entregue.
+    max_words: 100
+
+  - category: risk
+    metric_name: var_95
+    display_name: VaR 95%
+    priority: 5
+    unit: "%"
+    glossary_term: >
+      A perda maxima esperada em 95% dos meses. Em apenas 5% dos meses
+      a perda pode ser maior que esse valor.
+    analogy: >
+      E como a previsao do tempo: "em 95% dos dias nao chove mais que
+      20mm". O VaR diz: "em 95% dos meses voce nao perde mais que X%".
+    user_template: |
+      O fundo {fund_name} tem VaR 95% de {value}%.
+      Em R$: para cada R$ {investment} investidos, a perda maxima esperada
+      em 95% dos meses e de R$ {result}.
+
+      Explique o VaR de forma simples e o que significa na pratica.
+    interpretation_scale:
+      conservador: "> -0.5%"
+      moderado: "-0.5% a -2%"
+      agressivo: "-2% a -5%"
+      muito_agressivo: "< -5%"
+    example_output: |
+      O VaR 95% de -0,8% significa que em 95% dos meses a perda nao
+      passa de 0,8%. Em dinheiro: com R$ 10.000, voce dificilmente
+      perde mais de R$ 80 em um mes. Em apenas 5% dos meses a perda
+      pode ser maior.
+    max_words: 100
+
+  # =========================================================================
+  # EFFICIENCY
+  # =========================================================================
+
+  - category: efficiency
+    metric_name: alpha
+    display_name: Alpha
+    priority: 1
+    unit: "%"
+    glossary_term: >
+      O retorno extra que o gestor do fundo conseguiu acima (ou abaixo)
+      do que seria esperado dado o risco assumido.
+    analogy: >
+      E como um jogador que faz mais gols do que o esperado para alguem
+      na posicao dele. O alpha mede o talento do gestor.
+    user_template: |
+      O fundo {fund_name} tem Alpha de {value}% em relacao ao {benchmark}.
+      Retorno do fundo: {bench_value}%.
+
+      Explique o que esse Alpha significa sobre a gestao do fundo.
+    interpretation_scale:
+      negativo: "< -0.5%"
+      neutro: "-0.5% a 0.5%"
+      positivo: "0.5% a 2%"
+      excelente: "> 2%"
+    example_output: |
+      O Alpha de 0,8% significa que o gestor do fundo conseguiu entregar
+      0,8% a mais do que seria esperado. Esse retorno extra vem das
+      decisoes de investimento do gestor. Alpha positivo e sinal de
+      boa gestao.
+    max_words: 100
+
+  - category: efficiency
+    metric_name: beta
+    display_name: Beta
+    priority: 2
+    unit: ""
+    glossary_term: >
+      Mede quanto o fundo se move em relacao ao mercado (CDI).
+      Beta 1 = acompanha o mercado. Maior que 1 = mais sensivel.
+    analogy: >
+      E como a sensibilidade de um carro a estrada: beta alto significa
+      que o carro sente mais cada buraco, beta baixo e uma suspensao
+      mais macia.
+    user_template: |
+      O fundo {fund_name} tem Beta de {value} em relacao ao {benchmark}.
+
+      Explique o que esse Beta significa na pratica.
+    interpretation_scale:
+      defensivo: "< 0.8"
+      neutro: "0.8 a 1.2"
+      agressivo: "> 1.2"
+    example_output: |
+      O Beta de 0,95 indica que o fundo acompanha de perto o CDI,
+      com leve tendencia a variar menos. Na pratica, quando o CDI
+      sobe 1%, o fundo tende a subir 0,95%. E um comportamento
+      tipico de fundo conservador.
+    max_words: 100
+
+  - category: efficiency
+    metric_name: tracking_error
+    display_name: Tracking Error
+    priority: 3
+    unit: "%"
+    glossary_term: >
+      Quanto o retorno do fundo se desvia do benchmark.
+      Menor = mais previsivel em relacao a referencia.
+    analogy: >
+      E como a diferenca entre seguir um GPS a risca ou fazer desvios.
+      Tracking error baixo = segue o caminho certinho.
+    user_template: |
+      O fundo {fund_name} tem Tracking Error de {value}% em relacao ao {benchmark}.
+
+      Explique o que esse desvio significa.
+    interpretation_scale:
+      baixo: "< 0.5%"
+      moderado: "0.5% a 2%"
+      alto: "> 2%"
+    example_output: |
+      O Tracking Error de 0,3% indica que o fundo segue de perto o CDI.
+      Os retornos raramente se afastam muito da referencia. Isso e
+      esperado em fundos conservadores de renda fixa.
+    max_words: 80
+
+  - category: efficiency
+    metric_name: information_ratio
+    display_name: Information Ratio
+    priority: 4
+    unit: ""
+    glossary_term: >
+      Mede se o desvio em relacao ao benchmark valeu a pena.
+      Combina o retorno extra com a consistencia desse retorno.
+    analogy: >
+      E como avaliar um motorista de aplicativo: nao basta chegar rapido
+      (retorno extra), precisa ser consistente em todas as corridas.
+    user_template: |
+      O fundo {fund_name} tem Information Ratio de {value} em relacao ao {benchmark}.
+
+      Explique se o desvio da referencia esta valendo a pena.
+    interpretation_scale:
+      ruim: "< 0"
+      baixo: "0 a 0.5"
+      bom: "0.5 a 1.0"
+      excelente: "> 1.0"
+    example_output: |
+      O Information Ratio de 0,7 indica que o fundo esta conseguindo
+      se desviar do CDI de forma consistente e positiva. Em outras
+      palavras, quando o gestor toma decisoes diferentes do mercado,
+      essas decisoes tendem a dar certo.
+    max_words: 100
+
+  - category: efficiency
+    metric_name: correlation
+    display_name: Correlacao com Benchmark
+    priority: 5
+    unit: ""
+    glossary_term: >
+      Quanto o fundo se move junto com o benchmark.
+      1.0 = movem juntos. 0 = sem relacao. -1.0 = movem em direcoes opostas.
+    analogy: >
+      E como dois dancarinos: correlacao alta significa que dancam no
+      mesmo ritmo. Correlacao baixa, cada um danca do seu jeito.
+    user_template: |
+      O fundo {fund_name} tem correlacao de {value} com o {benchmark}.
+
+      Explique o que essa correlacao significa.
+    interpretation_scale:
+      baixa: "< 0.5"
+      moderada: "0.5 a 0.8"
+      alta: "0.8 a 0.95"
+      muito_alta: "> 0.95"
+    example_output: |
+      A correlacao de 0,92 com o CDI indica que o fundo se move de
+      forma muito parecida com a referencia. Isso e esperado para
+      fundos de renda fixa conservadores.
+    max_words: 80
+
+  # =========================================================================
+  # CONSISTENCY
+  # =========================================================================
+
+  - category: consistency
+    metric_name: positive_months_pct
+    display_name: Meses Positivos
+    priority: 1
+    unit: "%"
+    glossary_term: >
+      Percentual de meses em que o fundo teve retorno positivo.
+    analogy: >
+      E como o percentual de dias ensolarados no ano: quanto mais,
+      melhor a experiencia do investidor.
+    user_template: |
+      O fundo {fund_name} teve retorno positivo em {value}% dos meses analisados.
+
+      Explique o que essa consistencia significa para o investidor.
+    interpretation_scale:
+      inconsistente: "< 70%"
+      bom: "70% a 90%"
+      muito_bom: "90% a 98%"
+      excelente: "> 98%"
+    example_output: |
+      O fundo teve retorno positivo em 95% dos meses. Isso significa
+      que de cada 20 meses, apenas 1 teve resultado negativo.
+      E um nivel alto de consistencia para um fundo de renda fixa.
+    max_words: 80
+
+  - category: consistency
+    metric_name: best_month
+    display_name: Melhor Mes
+    priority: 2
+    unit: "%"
+    glossary_term: >
+      O maior retorno mensal que o fundo ja teve no periodo.
+    analogy: >
+      O recorde pessoal do fundo: o melhor resultado em um unico mes.
+    user_template: |
+      O melhor mes do fundo {fund_name} teve retorno de {value}%.
+      Em R$: R$ {investment} teriam rendido R$ {result} nesse mes.
+
+      Coloque esse resultado em contexto.
+    interpretation_scale:
+      modesto: "< 1%"
+      bom: "1% a 2%"
+      alto: "2% a 5%"
+      excepcional: "> 5%"
+    example_output: |
+      O melhor mes do fundo rendeu 1,8%. Em dinheiro, R$ 10.000
+      teriam virado R$ 10.180 em um unico mes. Para renda fixa,
+      e um resultado acima do normal.
+    max_words: 80
+
+  - category: consistency
+    metric_name: worst_month
+    display_name: Pior Mes
+    priority: 3
+    unit: "%"
+    glossary_term: >
+      O menor retorno mensal do fundo no periodo (pode ser negativo).
+    analogy: >
+      O pior momento do fundo: mostra o tamanho do susto que o
+      investidor ja levou.
+    user_template: |
+      O pior mes do fundo {fund_name} teve retorno de {value}%.
+      Em R$: R$ {investment} teriam ficado em R$ {result} nesse mes.
+
+      Explique o que esse pior cenario significa.
+    interpretation_scale:
+      leve: "> 0%"
+      moderado: "-1% a 0%"
+      significativo: "-5% a -1%"
+      severo: "< -5%"
+    example_output: |
+      O pior mes do fundo teve perda de -0,3%. Em dinheiro, R$ 10.000
+      teriam ficado em R$ 9.970. Para renda fixa, essa perda e
+      considerada leve e temporaria.
+    max_words: 80
+
+  - category: consistency
+    metric_name: win_loss_vs_cdi
+    display_name: Acertos vs CDI
+    priority: 4
+    unit: "%"
+    glossary_term: >
+      Percentual de meses em que o fundo rendeu mais que o CDI.
+    analogy: >
+      E como a taxa de acerto de um jogador de basquete: quantas vezes
+      ele acerta a cesta (supera o CDI) em relacao ao total de arremessos.
+    user_template: |
+      O fundo {fund_name} superou o CDI em {value}% dos meses analisados.
+
+      Explique o que isso indica sobre a capacidade do gestor.
+    interpretation_scale:
+      fraco: "< 40%"
+      medio: "40% a 55%"
+      bom: "55% a 70%"
+      excelente: "> 70%"
+    example_output: |
+      O fundo superou o CDI em 62% dos meses. Isso significa que na
+      maioria dos meses o fundo entrega mais que a referencia do mercado.
+      Uma taxa acima de 55% ja e considerada boa.
+    max_words: 80
+
+  - category: consistency
+    metric_name: stability_index
+    display_name: Indice de Estabilidade
+    priority: 5
+    unit: ""
+    glossary_term: >
+      Mede a previsibilidade dos retornos do fundo.
+      Quanto mais proximo de 1, mais estavel.
+    analogy: >
+      E como a regularidade de um trem: estabilidade alta significa
+      que ele chega sempre no mesmo horario. Baixa, os horarios variam muito.
+    user_template: |
+      O fundo {fund_name} tem Indice de Estabilidade de {value}.
+
+      Explique o que essa estabilidade significa para o investidor.
+    interpretation_scale:
+      instavel: "< 0.5"
+      moderado: "0.5 a 0.8"
+      estavel: "0.8 a 0.95"
+      muito_estavel: "> 0.95"
+    example_output: |
+      O Indice de Estabilidade de 0,88 indica retornos previsíveis.
+      O investidor pode esperar resultados consistentes mes a mes,
+      sem grandes surpresas. Ideal para quem busca tranquilidade.
+    max_words: 80
