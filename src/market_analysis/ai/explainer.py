@@ -128,7 +128,7 @@ class MetricsExplainer:
                 resp = await client.generate(
                     system_prompt=system_prompt,
                     user_prompt=user_prompt,
-                    max_tokens=tpl.max_words * 2,  # tokens ~= words * 1.3, buffer
+                    max_tokens=tpl.max_words * 6,  # Portuguese ~3-4 tok/word + DeepSeek exceeds word limits
                     temperature=0.3,
                 )
                 # Cache the result
