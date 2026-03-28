@@ -11,7 +11,7 @@ from market_analysis.ai.clients.base import LLMClient, LLMClientError, LLMRespon
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_MODEL = "llama3.2"
+DEFAULT_MODEL = "deepseek-coder:6.7b"
 DEFAULT_HOST = "http://localhost:11434"
 
 

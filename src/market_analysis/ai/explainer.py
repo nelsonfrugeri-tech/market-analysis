@@ -77,8 +77,8 @@ class MetricsExplainer:
 
         # Default fallback chain: Anthropic -> Ollama
         self._clients: list[LLMClient] = clients or [
-            AnthropicClient(),
             OllamaClient(),
+            AnthropicClient(),
         ]
 
     async def explain_metric(
