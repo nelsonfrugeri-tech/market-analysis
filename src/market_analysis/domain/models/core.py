@@ -19,11 +19,26 @@ from enum import StrEnum
 
 
 class SeriesCode(StrEnum):
-    """BCB time-series codes."""
+    """BCB time-series codes.
 
+    Reference rates (annualized) are used for display.
+    Daily factors are used for period accumulation.
+    """
+
+    # Daily factors (for accumulation)
+    SELIC_DAILY = "11"
+    CDI_DAILY = "12"
+
+    # Annualized reference rates
+    SELIC_TARGET = "432"
+    CDI_ANNUAL = "4389"
+
+    # Monthly
+    IPCA = "433"
+
+    # Legacy aliases — kept for backward compat with bcb_collector
     SELIC = "432"
     CDI = "4389"
-    IPCA = "433"
 
 
 class CollectionStatus(StrEnum):

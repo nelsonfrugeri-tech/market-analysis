@@ -15,7 +15,7 @@ from market_analysis.infrastructure.cvm_collector import (
     NU_RESERVA_CNPJ,
     collect_multiple_months,
 )
-from market_analysis.infrastructure.benchmark_fetcher import collect_benchmarks
+from market_analysis.infrastructure.benchmarks import collect_all_benchmarks_sync
 from market_analysis.infrastructure.news_fetcher import collect_news
 from market_analysis.infrastructure.pdf_generator import generate_pdf
 from market_analysis.application.performance import compute_performance
@@ -97,11 +97,18 @@ def main(argv: list[str] | None = None) -> int:
 
         # Step 2: Collect benchmark rates
         logger.info("Collecting benchmark rates from BCB...")
-        benchmarks = collect_benchmarks(
+        benchmarks = collect_all_benchmarks_sync(
             start_date=records[0].date,
             end_date=records[-1].date,
         )
-        logger.info("Benchmarks: %s", benchmarks)
+        logger.info(
+            "Benchmarks: SELIC=%.4f%%, CDI=%.4f%%, IPCA=%.4f%%, CDB=%.4f%%, Poupanca=%.4f%%",
+            benchmarks.selic_accumulated,
+            benchmarks.cdi_accumulated,
+            benchmarks.ipca_accumulated,
+            benchmarks.cdb_estimated,
+            benchmarks.poupanca_estimated,
+        )
 
         # Step 3: Compute performance
         logger.info("Computing performance metrics...")

@@ -1,4 +1,7 @@
-"""Tests for the synchronous BCB benchmark fetcher."""
+"""Tests for the deprecated benchmark_fetcher backward-compat wrapper.
+
+These tests verify that the old API still works via the new benchmarks module.
+"""
 
 from __future__ import annotations
 
@@ -7,6 +10,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from market_analysis.infrastructure.benchmarks import BCBClient, BCBClientError
 from market_analysis.infrastructure.benchmark_fetcher import (
     BenchmarkFetchError,
     accumulate_daily_rates,
@@ -52,7 +56,7 @@ class TestAccumulateMonthlyRates:
 
 
 class TestCollectBenchmarks:
-    @patch("market_analysis.infrastructure.benchmark_fetcher._fetch_series")
+    @patch.object(BCBClient, "fetch_series_sync")
     def test_returns_all_benchmarks(self, mock_fetch: MagicMock) -> None:
         mock_fetch.return_value = [{"data": "01/01/2026", "valor": "0.05"}]
 
@@ -63,9 +67,9 @@ class TestCollectBenchmarks:
         assert "ipca" in result
         assert all(isinstance(v, float) for v in result.values())
 
-    @patch("market_analysis.infrastructure.benchmark_fetcher._fetch_series")
+    @patch.object(BCBClient, "fetch_series_sync")
     def test_handles_api_failure_gracefully(self, mock_fetch: MagicMock) -> None:
-        mock_fetch.side_effect = BenchmarkFetchError("API down")
+        mock_fetch.side_effect = BCBClientError("API down")
 
         result = collect_benchmarks(date(2026, 1, 1), date(2026, 1, 31))
 

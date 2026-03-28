@@ -48,4 +48,12 @@ class FundPerformance:
     vs_cdi: float
     vs_ipca: float
     trend_30d: str  # "up", "down", "flat"
+
+    # Advanced metrics
+    sharpe_ratio: float  # risk-adjusted return vs CDI
+    alpha: float  # excess return vs expected (CAPM)
+    beta: float  # sensitivity to market (vs CDI)
+    var_95: float  # Value at Risk 95% confidence
+    max_drawdown: float  # Maximum peak-to-trough loss
+
     daily_records: list[FundDailyRecord] = field(default_factory=list)
