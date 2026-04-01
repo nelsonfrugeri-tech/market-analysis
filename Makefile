@@ -63,7 +63,8 @@ install: install-backend install-frontend
 
 install-backend:
 	@echo "📦 Installing Python dependencies..."
-	@pip install -e .
+	@if [ ! -d ".venv" ]; then /opt/homebrew/bin/python3.12 -m venv .venv; fi
+	@.venv/bin/pip install -e .
 	@echo "✅ Backend dependencies installed!"
 
 install-frontend:
@@ -78,7 +79,7 @@ test: test-backend test-frontend
 
 test-backend:
 	@echo "🧪 Running Python tests with coverage..."
-	@python -m pytest tests/ -v --cov=src/market_analysis --cov-report=term-missing --cov-report=html
+	@.venv/bin/python -m pytest tests/ -v --cov=src/market_analysis --cov-report=term-missing --cov-report=html
 	@echo "✅ Backend tests completed! Coverage report: htmlcov/index.html"
 
 test-frontend:
@@ -93,12 +94,12 @@ test-e2e:
 
 test-api:
 	@echo "🧪 Running API integration tests..."
-	@python -m pytest tests/test_api.py -v
+	@.venv/bin/python -m pytest tests/test_api.py -v
 	@echo "✅ API tests completed!"
 
 test-coverage:
 	@echo "📊 Generating test coverage report..."
-	@python -m pytest tests/ --cov=src/market_analysis --cov-report=html
+	@.venv/bin/python -m pytest tests/ --cov=src/market_analysis --cov-report=html
 	@cd frontend && npm run test:coverage
 	@echo "✅ Coverage reports generated!"
 
@@ -109,8 +110,8 @@ lint: lint-backend lint-frontend
 
 lint-backend:
 	@echo "🔍 Running Python linters..."
-	@python -m ruff check src/ tests/
-	@python -m mypy src/market_analysis
+	@.venv/bin/python -m ruff check src/ tests/
+	@.venv/bin/python -m mypy src/market_analysis
 	@echo "✅ Backend code quality checks completed!"
 
 lint-frontend:
@@ -143,7 +144,7 @@ run:
 
 run-backend:
 	@echo "🐍 Starting FastAPI server..."
-	@uvicorn market_analysis.api.main:app --reload --port 8000
+	@.venv/bin/uvicorn market_analysis.api.main:app --reload --port 8000
 
 run-frontend:
 	@echo "⚛️  Starting Next.js development server..."
@@ -151,7 +152,7 @@ run-frontend:
 
 run-cli:
 	@echo "💻 Running CLI analysis tool..."
-	@python -m market_analysis.cli --months 3 --output reports/analysis.pdf
+	@.venv/bin/python -m market_analysis.cli --months 3 --output reports/analysis.pdf
 	@echo "✅ Analysis complete! Report saved to reports/analysis.pdf"
 
 # ==================== BUILDING ====================
@@ -173,7 +174,7 @@ build-docs:
 
 db-init:
 	@echo "🗄️ Initializing SQLite database..."
-	@python -c "from market_analysis.infrastructure.database import init_db; init_db()"
+	@.venv/bin/python -c "from market_analysis.infrastructure.database import get_database; get_database()"
 	@echo "✅ Database initialized!"
 
 db-migrate:
@@ -182,7 +183,7 @@ db-migrate:
 
 db-seed:
 	@echo "🌱 Seeding database with test data..."
-	@python -c "from tests.helpers.db_helpers import seed_test_data; seed_test_data()" || echo "⚠️  Test data seeding not available"
+	@.venv/bin/python -c "from tests.helpers.db_helpers import seed_test_data; seed_test_data()" || echo "⚠️  Test data seeding not available"
 
 db-reset:
 	@echo "🗄️ Resetting database..."
