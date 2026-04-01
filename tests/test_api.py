@@ -589,7 +589,7 @@ class TestDocs:
         assert response.status_code == 200
         schema = response.json()
         assert schema["info"]["title"] == "Market Analysis API"
-        assert schema["info"]["version"] == "0.2.0"
+        assert schema["info"]["version"] == "0.3.0"
 
     def test_swagger_docs_available(self, client: TestClient) -> None:
         """Swagger UI is available."""

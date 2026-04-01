@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-04-01
+
+### Added
+
+#### AI-Powered Fund Analysis (DeepSeek/Ollama Integration)
+- **3 new REST API endpoints** for intelligent investment analysis:
+  - `POST /api/v1/funds/{cnpj}/analysis` - Complete LLM-powered analysis (performance, risk, recommendation)
+  - `GET /api/v1/funds/{cnpj}/insights` - Historical insights with latest analysis
+  - `POST /api/v1/analysis/batch` - Batch analysis for up to 10 funds
+- **LLM Fallback Chain**: DeepSeek:6.7b -> Qwen3:4b -> Anthropic -> Static analysis
+- **3 Analysis Types**: Performance analysis, Risk analysis, Personalized recommendations
+- **Structured JSON responses** with confidence scores and metadata
+- **Graceful degradation** when LLM providers are unavailable (static fallback)
+- **Response caching** via file-based cache to avoid redundant LLM calls
+- **Async processing** for non-blocking LLM calls
+- **Pydantic models** for all analysis request/response schemas
+- **31 new tests** with 95% coverage on analysis modules
+- **Regression tests** ensuring all v0.2.0 endpoints remain functional
+
+#### Architecture
+- **AnalysisService** - Orchestrates LLM calls with configurable client chain
+- **AnalysisRouter** - FastAPI APIRouter for clean endpoint separation
+- **Analysis Models** - Complete Pydantic v2 models for analysis types, responses, and batch operations
+
 ## [0.2.1] - 2026-04-01
 
 ### Security
