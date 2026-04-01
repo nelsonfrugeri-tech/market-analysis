@@ -127,7 +127,6 @@ lint-frontend:
 
 format:
 	@echo "🎨 Formatting all code..."
-<<<<<<< HEAD
 	@.venv/bin/python -m ruff format src/ tests/
 	@cd frontend && npm run format
 	@echo "✅ Code formatting completed!"
@@ -147,27 +146,18 @@ compile-frontend:
 	@cd frontend && npm run build
 	@echo "✅ Frontend build completed!"
 
-=======
 	@python -m ruff format src/ tests/
 	@cd frontend && npm run format
 	@echo "✅ Code formatting completed!"
 
->>>>>>> main
 # ==================== DEVELOPMENT SERVERS ====================
 
 dev: run
 
-<<<<<<< HEAD
 run: kill-dev
 	@echo "🚀 Starting development servers..."
 	@echo "Backend: http://localhost:8000"
 	@echo "Frontend: http://localhost:3001"
-=======
-run:
-	@echo "🚀 Starting development servers..."
-	@echo "Backend: http://localhost:8000"
-	@echo "Frontend: http://localhost:3000"
->>>>>>> main
 	@echo "API Docs: http://localhost:8000/api/docs"
 	@echo ""
 	@echo "Press Ctrl+C to stop all servers"
@@ -176,7 +166,6 @@ run:
 	 make run-frontend & \
 	 wait
 
-<<<<<<< HEAD
 kill-dev:
 	@echo "🧹 Cleaning up running processes..."
 	@pkill -f "uvicorn" || true
@@ -187,8 +176,6 @@ kill-dev:
 	@sleep 1
 	@echo "✅ Ports 8000 and 3001 cleaned!"
 
-=======
->>>>>>> main
 run-backend:
 	@echo "🐍 Starting FastAPI server..."
 	@.venv/bin/uvicorn market_analysis.api.main:app --reload --port 8000
@@ -202,8 +189,6 @@ run-cli:
 	@.venv/bin/python -m market_analysis.cli --months 3 --output reports/analysis.pdf
 	@echo "✅ Analysis complete! Report saved to reports/analysis.pdf"
 
-<<<<<<< HEAD
-=======
 # ==================== BUILDING ====================
 
 build: build-frontend
@@ -219,7 +204,6 @@ build-docs:
 	@python -c "import webbrowser; webbrowser.open('http://localhost:8000/api/docs')"
 	@echo "✅ API docs available at http://localhost:8000/api/docs"
 
->>>>>>> main
 # ==================== DATABASE ====================
 
 db-init:
@@ -227,8 +211,6 @@ db-init:
 	@.venv/bin/python -c "from market_analysis.infrastructure.database import get_database; get_database()"
 	@echo "✅ Database initialized!"
 
-<<<<<<< HEAD
-=======
 db-migrate:
 	@echo "🗄️ Running database migrations..."
 	@echo "ℹ️  No migrations system yet - using direct SQLite schema"
@@ -237,7 +219,6 @@ db-seed:
 	@echo "🌱 Seeding database with test data..."
 	@.venv/bin/python -c "from tests.helpers.db_helpers import seed_test_data; seed_test_data()" || echo "⚠️  Test data seeding not available"
 
->>>>>>> main
 db-reset:
 	@echo "🗄️ Resetting database..."
 	@rm -f data/market_analysis.db
@@ -254,7 +235,6 @@ clean:
 	@rm -rf reports/*.pdf
 	@echo "✅ Clean completed!"
 
-<<<<<<< HEAD
 security-audit:
 	@echo "🔒 Running security audits..."
 	@cd frontend && npm audit
@@ -262,7 +242,6 @@ security-audit:
 
 # ==================== UTILITIES ====================
 
-=======
 clean-cache:
 	@echo "🧹 Clearing all caches..."
 	@rm -rf __pycache__ **/__pycache__ .pytest_cache .mypy_cache .ruff_cache
@@ -277,11 +256,6 @@ deps-update:
 	@cd frontend && npm outdated
 	@echo "ℹ️  Review outdated packages above. Use exact pinning for security!"
 
-security-audit:
-	@echo "🔒 Running security audits..."
-	@pip-audit || echo "⚠️  pip-audit not installed: pip install pip-audit"
-	@cd frontend && npm audit
-	@echo "✅ Security audits completed!"
 
 # ==================== DOCKER (FUTURE) ====================
 
@@ -298,12 +272,10 @@ docker-run:
 check: lint test
 	@echo "✅ All checks passed! Ready for deployment."
 
->>>>>>> main
 status:
 	@echo "📊 Project Status:"
 	@echo ""
 	@echo "Backend (Python):"
-<<<<<<< HEAD
 	@python3 --version 2>/dev/null || echo "  Python not found"
 	@echo ""
 	@echo "Frontend (Node.js):"
@@ -312,7 +284,6 @@ status:
 	@echo ""
 	@echo "Database:"
 	@test -f data/market_analysis.db && echo "  ✅ Database exists" || echo "  ❌ Database not initialized"
-=======
 	@python --version
 	@pip show market-analysis | grep Version || echo "  Package not installed"
 	@echo ""
@@ -338,4 +309,3 @@ info:
 	@echo "  • README.md - Complete setup guide"
 	@echo "  • API Docs: http://localhost:8000/api/docs"
 	@echo "  • CHANGELOG.md - Version history"
->>>>>>> main
