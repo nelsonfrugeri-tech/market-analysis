@@ -5,6 +5,40 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-01
+
+### Added
+
+#### Frontend Web Dashboard
+- **Next.js 16.2.2 + React 19.2.4** complete dashboard implementation
+- **TypeScript strict mode** with zero `any` types for type safety
+- **Tailwind CSS v4 + shadcn/ui** component library for elegant UI
+- **Brazilian formatters** (pt-BR locale) for currency, percentages, and numbers
+- **WCAG 2.2 accessibility** compliance with semantic HTML
+
+#### Core Components Delivered
+- **MetricCard** - Financial metrics display component with tooltips (13 tests)
+- **MetricsSection** - Collapsible sections container component (10 tests)
+- **PerformanceSection** - Complete performance metrics section (11 tests)
+
+#### Architecture & Type System
+- **45+ financial metrics** fully typed (Performance, Risk, Efficiency, Consistency)
+- **6 API endpoints contracts** defined for FastAPI integration
+- **Multi-fund extensible structure** with dynamic `/dashboard/[cnpj]` routing
+- **Mock data system** for parallel frontend/backend development
+
+#### Developer Experience & Quality
+- **36 unit tests** passing with 100% component coverage
+- **Vitest + Testing Library** modern testing framework
+- **Biome linting/formatting** with strict code quality rules
+- **TanStack Query** setup for API caching and state management
+- **Production build** optimization and validation
+
+#### Documentation & Diagrams
+- **v0.2.0 Architecture diagram** created in `docs/v0.2.0-architecture.drawio`
+- **Complete type definitions** in TypeScript for API contracts
+- **Component documentation** with usage examples and tests
+
 ## [0.1.0] - 2026-03-27
 
 ### Added
