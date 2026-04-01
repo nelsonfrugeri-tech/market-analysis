@@ -4,29 +4,29 @@ version = "0.1.0"
 description = "Automated fund analysis and reporting system"
 requires-python = ">=3.11"
 dependencies = [
-    "pydantic>=2.0,<3.0",
-    "pydantic-settings>=2.0,<3.0",
-    "aiosqlite>=0.19",
-    "httpx>=0.25",
-    "feedparser>=6.0",
-    "python-bcb>=0.3",
-    "reportlab>=4.0",
-    "matplotlib>=3.8",
-    "structlog>=23.0",
-    "apscheduler>=3.10",
-    "fastapi>=0.104.0",
-    "uvicorn[standard]>=0.24.0",
+    "pydantic==2.12.5",
+    "pydantic-settings==2.13.1",
+    "aiosqlite==0.22.1",
+    "httpx==0.28.1",
+    "feedparser==6.0.12",
+    "python-bcb==0.3.6",
+    "reportlab==4.4.10",
+    "matplotlib==3.10.8",
+    "structlog==25.5.0",
+    "apscheduler==3.11.2",
+    "fastapi==0.135.2",
+    "uvicorn[standard]==0.41.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
-    "pytest-asyncio>=0.23",
-    "pytest-cov>=4.0",
-    "ruff>=0.3",
-    "mypy>=1.8",
-    "black>=24.0",
-    "pre-commit>=3.0",
+    "pytest==7.4.4",
+    "pytest-asyncio==0.24.0",
+    "pytest-cov==4.1.0",
+    "ruff==0.7.4",
+    "mypy==1.13.0",
+    "black==24.10.0",
+    "pre-commit==3.8.0",
 ]
 
 [build-system]
