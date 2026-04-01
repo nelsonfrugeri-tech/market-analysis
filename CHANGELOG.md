@@ -28,7 +28,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **AnalysisService** - Orchestrates LLM calls with configurable client chain
 - **AnalysisRouter** - FastAPI APIRouter for clean endpoint separation
 - **Analysis Models** - Complete Pydantic v2 models for analysis types, responses, and batch operations
-
 ## [0.2.1] - 2026-04-01
 
 ### Security
