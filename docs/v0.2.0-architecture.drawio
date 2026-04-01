@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="drawio-mcp" modified="2026-04-01T18:09:51.000Z" agent="drawio-mcp/1.0" version="24.7.17" type="device" compressed="false">
+  <diagram name="market-analysis-v02-architecture" id="528616783228">
+    <mxGraphModel dx="1354" dy="981" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="none" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="2" value="BCB" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="50" y="80" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="3" value="FastAPI" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270" y="620" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="4" value="Backend" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;arcSize=10;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270" y="260" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="5" value="SQLite" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270" y="440" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="6" value="User" style="shape=actor;whiteSpace=wrap;html=1;fillColor=#08427B;fontColor=#ffffff;strokeColor=none;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270" y="980" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="7" value="Make" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270" y="80" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="8" value="CVM" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="490" y="80" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="9" value="Frontend" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="270" y="800" width="120.0" height="60.0" />
+        </mxCell>
+        <mxCell id="10" value="Daily NAV&#10;Equity Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="8" target="4">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="11" value="SELIC, CDI&#10;IPCA Rates" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="2" target="4">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="12" value="Processed&#10;Metrics + Data" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="4" target="5">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="13" value="Read Data&#10;(Instant)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="5" target="3">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="14" value="REST API&#10;6 Endpoints" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="3" target="9">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="15" value="Investment&#10;Dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="9" target="6">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="16" value="Update Button&#10;POST /collect" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="9" target="3">
+          <mxGeometry as="geometry" relative="1" />
+        </mxCell>
+        <mxCell id="17" value="Trigger&#10;Data Collection" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="3" target="4">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="330" y="520" />
+              <mxPoint x="260" y="520" />
+              <mxPoint x="260" y="290" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="18" value="Start API&#10;Server" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="7" target="3">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="330" y="240" />
+              <mxPoint x="260" y="240" />
+              <mxPoint x="260" y="650" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="19" value="Start Next.js&#10;Dev Server" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;" parent="1" edge="1" source="7" target="9">
+          <mxGeometry as="geometry" relative="1">
+            <Array as="points">
+              <mxPoint x="330" y="240" />
+              <mxPoint x="260" y="240" />
+              <mxPoint x="260" y="830" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="20" value="Market Analysis v0.2.0 - Arquitetura Híbrida" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="50" y="10" width="400" height="30" />
+        </mxCell>
+        <mxCell id="21" value="Backend Existente + FastAPI + Next.js Frontend" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#666666;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="50" y="42" width="400" height="20" />
+        </mxCell>
+        <mxCell id="22" value="Componentes da Arquitetura" style="swimlane;fontStyle=1;childLayout=stackLayout;horizontal=1;startSize=26;fillColor=#ffffff;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;strokeColor=#666666;html=1;" parent="1" vertex="1">
+          <mxGeometry as="geometry" x="50.0" y="500.0" width="200" height="182" />
+        </mxCell>
+        <mxCell id="23" value="Fontes Externas (CVM, BCB)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#FFE6CC;strokeColor=#D79B00;html=1;" parent="22" vertex="1">
+          <mxGeometry as="geometry" x="0" y="26" width="200" height="26" />
+        </mxCell>
+        <mxCell id="24" value="Backend Atual (Python)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#E1D5E7;strokeColor=#9673A6;html=1;" parent="22" vertex="1">
+          <mxGeometry as="geometry" x="0" y="52" width="200" height="26" />
+        </mxCell>
+        <mxCell id="25" value="Banco de Dados (SQLite)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#D5E8D4;strokeColor=#82B366;html=1;" parent="22" vertex="1">
+          <mxGeometry as="geometry" x="0" y="78" width="200" height="26" />
+        </mxCell>
+        <mxCell id="26" value="Nova API (FastAPI - Elliot)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#DAE8FC;strokeColor=#6C8EBF;html=1;" parent="22" vertex="1">
+          <mxGeometry as="geometry" x="0" y="104" width="200" height="26" />
+        </mxCell>
+        <mxCell id="27" value="Frontend (Next.js - Tyrell)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#FFF2CC;strokeColor=#D6B656;html=1;" parent="22" vertex="1">
+          <mxGeometry as="geometry" x="0" y="130" width="200" height="26" />
+        </mxCell>
+        <mxCell id="28" value="Deploy Local (Make)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;fillColor=#F8CECC;strokeColor=#B85450;html=1;" parent="22" vertex="1">
+          <mxGeometry as="geometry" x="0" y="156" width="200" height="26" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

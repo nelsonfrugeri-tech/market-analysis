@@ -1,0 +1,1 @@
+"""FastAPI module for market analysis API endpoints."""
