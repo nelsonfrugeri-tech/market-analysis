@@ -7,36 +7,35 @@ performance calculation, and response formatting for API endpoints.
 
 import asyncio
 from datetime import date
-from typing import Optional
 
 from ..application.performance import compute_performance
-from ..domain.models.fund import FundPerformance
+from ..domain.models.fund import FundDailyRecord, FundPerformance
 from ..infrastructure.benchmarks import collect_all_benchmarks_sync
 from ..infrastructure.cvm_collector import NU_RESERVA_CNPJ, collect_multiple_months
 
 
 async def calculate_fund_performance(
     cnpj: str,
-    months: Optional[int] = None,
-    start_date: Optional[date] = None,
-    end_date: Optional[date] = None,
+    months: int | None = None,
+    start_date: date | None = None,
+    end_date: date | None = None,
 ) -> FundPerformance:
-    """
-    Calculate comprehensive fund performance metrics.
+    """Calculate comprehensive fund performance metrics.
 
-    Runs sync functions in a thread to maintain async interface.
+    Runs sync collection functions via ``asyncio.to_thread`` to keep the
+    async interface non-blocking.
 
     Args:
-        cnpj: Fund CNPJ identifier (currently only supports Nu Reserva CNPJ)
-        months: Number of months for analysis
-        start_date: Custom start date (not fully implemented yet)
-        end_date: Custom end date (not fully implemented yet)
+        cnpj: Fund CNPJ identifier (currently only supports Nu Reserva).
+        months: Number of months for analysis.
+        start_date: Custom start date (not fully implemented yet).
+        end_date: Custom end date (not fully implemented yet).
 
     Returns:
-        FundPerformance with complete metrics
+        FundPerformance with complete metrics.
 
     Raises:
-        ValueError: If no data available or unsupported CNPJ
+        ValueError: If no data available or unsupported CNPJ.
     """
     if cnpj != NU_RESERVA_CNPJ:
         raise ValueError(
@@ -46,16 +45,22 @@ async def calculate_fund_performance(
     if not months:
         months = 3
 
-    # Use asyncio.to_thread instead of deprecated get_event_loop().run_in_executor
-    records = await asyncio.to_thread(collect_multiple_months, cnpj, months)
+    records: list[FundDailyRecord] = await asyncio.to_thread(
+        collect_multiple_months,
+        cnpj,
+        months,
+    )
 
     if not records:
         raise ValueError(
-            f"No fund data collected for CNPJ {cnpj} in the last {months} months"
+            f"No fund data collected for CNPJ {cnpj} "
+            f"in the last {months} months"
         )
 
     benchmarks = await asyncio.to_thread(
-        collect_all_benchmarks_sync, records[0].date, records[-1].date
+        collect_all_benchmarks_sync,
+        records[0].date,
+        records[-1].date,
     )
 
     performance = compute_performance(
@@ -67,7 +72,7 @@ async def calculate_fund_performance(
     return performance
 
 
-async def get_fund_metadata() -> list[dict]:
+async def get_fund_metadata() -> list[dict[str, str]]:
     """Get list of available funds. Currently hardcoded to Nu Reserva."""
     return [
         {
@@ -82,12 +87,19 @@ async def get_fund_metadata() -> list[dict]:
     ]
 
 
-async def get_fund_daily_data(cnpj: str, months: int = 3):
-    """Get daily data for charts. Currently uses CVM collector directly."""
+async def get_fund_daily_data(
+    cnpj: str, months: int = 3
+) -> list[FundDailyRecord]:
+    """Get daily data for charts. Uses CVM collector directly."""
     if cnpj != NU_RESERVA_CNPJ:
         raise ValueError(
             f"Only Nu Reserva CNPJ {NU_RESERVA_CNPJ} is currently supported"
         )
 
-    records = await asyncio.to_thread(collect_multiple_months, cnpj, months)
+    records: list[FundDailyRecord] = await asyncio.to_thread(
+        collect_multiple_months,
+        cnpj,
+        months,
+    )
+
     return records

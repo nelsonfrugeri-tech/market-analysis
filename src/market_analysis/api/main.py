@@ -5,15 +5,21 @@ Provides REST API endpoints for fund performance data, metrics, and collection.
 """
 
 import asyncio
+import sqlite3
 from datetime import date, datetime
-from typing import Optional
+from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, Path, Query
+from fastapi import FastAPI, HTTPException, Query
+from fastapi import Path as FastAPIPath
 from fastapi.middleware.cors import CORSMiddleware
 
+from ..domain.models.fund import FundPerformance
+from ..infrastructure.benchmarks import collect_all_benchmarks_sync
+from ..infrastructure.cvm_collector import NU_RESERVA_CNPJ, collect_multiple_months
 from .models import (
     BenchmarkComparison,
     BenchmarkDetail,
+    BenchmarkEstimate,
     CollectionResponse,
     DailyDataResponse,
     EfficiencyMetrics,
@@ -26,11 +32,11 @@ from .models import (
     PeriodInfo,
     RiskMetrics,
 )
-from .service import calculate_fund_performance, get_fund_daily_data, get_fund_metadata
-from ..domain.models.fund import FundPerformance
-from ..infrastructure.benchmarks import collect_all_benchmarks_sync
-from ..infrastructure.cvm_collector import NU_RESERVA_CNPJ, collect_multiple_months
-
+from .service import (
+    calculate_fund_performance,
+    get_fund_daily_data,
+    get_fund_metadata,
+)
 
 app = FastAPI(
     title="Market Analysis API",
@@ -50,16 +56,345 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Database path for lightweight health check
+_DB_PATH = Path("data/market_analysis.db")
+
+
+# ---------------------------------------------------------------------------
+# Metric explanations -- covers all metrics from AdvancedMetrics + basics
+# ---------------------------------------------------------------------------
+METRIC_EXPLANATIONS: list[MetricExplanation] = [
+    # Performance
+    MetricExplanation(
+        key="return_pct",
+        name="Return (%)",
+        value=None,
+        explanation=(
+            "Period return percentage shows how much the fund gained or "
+            "lost over the selected timeframe"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="cumulative_return",
+        name="Cumulative Return",
+        value=None,
+        explanation=(
+            "Total accumulated return since the beginning of the analysis "
+            "period, compounding daily returns"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="ytd_return",
+        name="YTD Return",
+        value=None,
+        explanation=(
+            "Year-to-date return measures fund performance from January 1st "
+            "of the current year to the latest available date"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="twelve_month_return",
+        name="12-Month Return",
+        value=None,
+        explanation=(
+            "Rolling 12-month return shows the fund's performance over the "
+            "last full year, useful for annualized comparisons"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="six_month_return",
+        name="6-Month Return",
+        value=None,
+        explanation=(
+            "Rolling 6-month return captures medium-term fund performance "
+            "trends"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="three_month_return",
+        name="3-Month Return",
+        value=None,
+        explanation=(
+            "Rolling 3-month return reflects recent short-term performance "
+            "of the fund"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="monthly_avg_return",
+        name="Monthly Average Return",
+        value=None,
+        explanation=(
+            "Average monthly return across all months in the analysis "
+            "period, giving a sense of typical monthly gains"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="nav_start",
+        name="NAV (Start)",
+        value=None,
+        explanation=(
+            "Net Asset Value at the beginning of the analysis period. "
+            "NAV represents the per-share value of the fund"
+        ),
+        category="performance",
+    ),
+    MetricExplanation(
+        key="nav_end",
+        name="NAV (End)",
+        value=None,
+        explanation=(
+            "Net Asset Value at the end of the analysis period. Comparing "
+            "start and end NAV shows the absolute price change"
+        ),
+        category="performance",
+    ),
+    # Risk
+    MetricExplanation(
+        key="volatility",
+        name="Volatility",
+        value=None,
+        explanation=(
+            "Annualized standard deviation of daily returns. Measures how "
+            "much the fund's returns vary day to day. Higher volatility "
+            "means more risk"
+        ),
+        category="risk",
+    ),
+    MetricExplanation(
+        key="sharpe_ratio",
+        name="Sharpe Ratio",
+        value=None,
+        explanation=(
+            "Risk-adjusted return measure (return minus risk-free rate, "
+            "divided by volatility). Higher values indicate better return "
+            "per unit of risk taken"
+        ),
+        category="risk",
+    ),
+    MetricExplanation(
+        key="sortino_ratio",
+        name="Sortino Ratio",
+        value=None,
+        explanation=(
+            "Similar to Sharpe but only penalizes downside volatility. "
+            "Better for funds with asymmetric return distributions, as "
+            "it ignores upside volatility"
+        ),
+        category="risk",
+    ),
+    MetricExplanation(
+        key="max_drawdown",
+        name="Max Drawdown",
+        value=None,
+        explanation=(
+            "Largest peak-to-trough loss during the period. Shows the "
+            "worst-case scenario an investor would have experienced"
+        ),
+        category="risk",
+    ),
+    MetricExplanation(
+        key="var_95",
+        name="VaR 95%",
+        value=None,
+        explanation=(
+            "Value at Risk at 95% confidence. The potential daily loss "
+            "that won't be exceeded 95% of the time under normal market "
+            "conditions"
+        ),
+        category="risk",
+    ),
+    # Efficiency
+    MetricExplanation(
+        key="alpha",
+        name="Alpha",
+        value=None,
+        explanation=(
+            "Excess return above what's expected given the fund's risk "
+            "level (CAPM). Positive alpha indicates outperformance "
+            "relative to the benchmark"
+        ),
+        category="efficiency",
+    ),
+    MetricExplanation(
+        key="beta",
+        name="Beta",
+        value=None,
+        explanation=(
+            "Sensitivity to market (CDI) movements. Beta > 1 means more "
+            "volatile than the market, < 1 means less volatile"
+        ),
+        category="efficiency",
+    ),
+    MetricExplanation(
+        key="tracking_error",
+        name="Tracking Error",
+        value=None,
+        explanation=(
+            "Standard deviation of the difference between fund and "
+            "benchmark returns. Lower tracking error means the fund "
+            "more closely follows its benchmark"
+        ),
+        category="efficiency",
+    ),
+    MetricExplanation(
+        key="information_ratio",
+        name="Information Ratio",
+        value=None,
+        explanation=(
+            "Alpha divided by tracking error. Measures the consistency "
+            "of excess returns relative to the benchmark. Higher is better"
+        ),
+        category="efficiency",
+    ),
+    MetricExplanation(
+        key="correlation",
+        name="Correlation",
+        value=None,
+        explanation=(
+            "Statistical correlation between fund and benchmark daily "
+            "returns. Values near 1 mean the fund moves closely with "
+            "the benchmark; near 0 means independent"
+        ),
+        category="efficiency",
+    ),
+    # Consistency
+    MetricExplanation(
+        key="positive_months_pct",
+        name="Positive Months (%)",
+        value=None,
+        explanation=(
+            "Percentage of months with positive returns. Higher values "
+            "indicate more consistent gains over time"
+        ),
+        category="consistency",
+    ),
+    MetricExplanation(
+        key="best_month",
+        name="Best Month",
+        value=None,
+        explanation=(
+            "Highest monthly return in the analysis period. Shows the "
+            "upside potential of the fund"
+        ),
+        category="consistency",
+    ),
+    MetricExplanation(
+        key="worst_month",
+        name="Worst Month",
+        value=None,
+        explanation=(
+            "Lowest monthly return in the analysis period. Shows the "
+            "downside risk in a single month"
+        ),
+        category="consistency",
+    ),
+    MetricExplanation(
+        key="win_loss_vs_cdi",
+        name="Win/Loss vs CDI",
+        value=None,
+        explanation=(
+            "Ratio of months where the fund beat CDI versus months "
+            "where it underperformed. Above 1.0 means the fund beats "
+            "CDI more often than not"
+        ),
+        category="consistency",
+    ),
+    MetricExplanation(
+        key="stability_index",
+        name="Stability Index",
+        value=None,
+        explanation=(
+            "Composite score measuring return consistency. Higher values "
+            "indicate more stable and predictable fund performance"
+        ),
+        category="consistency",
+    ),
+    # Benchmark comparisons
+    MetricExplanation(
+        key="vs_cdi",
+        name="vs CDI",
+        value=None,
+        explanation=(
+            "Excess return over CDI in basis points. Positive means "
+            "the fund outperformed the CDI interbank rate"
+        ),
+        category="comparison",
+    ),
+    MetricExplanation(
+        key="vs_selic",
+        name="vs SELIC",
+        value=None,
+        explanation=(
+            "Excess return over SELIC in basis points. SELIC is the "
+            "Brazilian central bank base rate"
+        ),
+        category="comparison",
+    ),
+    MetricExplanation(
+        key="vs_ipca",
+        name="vs IPCA",
+        value=None,
+        explanation=(
+            "Excess return over IPCA (inflation) in basis points. "
+            "Positive means the fund beat inflation"
+        ),
+        category="comparison",
+    ),
+    MetricExplanation(
+        key="vs_cdb",
+        name="vs CDB",
+        value=None,
+        explanation=(
+            "Excess return over estimated CDB rate. CDB is a common "
+            "fixed-income investment in Brazil (typically ~95% of CDI)"
+        ),
+        category="comparison",
+    ),
+    MetricExplanation(
+        key="vs_poupanca",
+        name="vs Poupanca",
+        value=None,
+        explanation=(
+            "Excess return over estimated savings account (Poupanca) "
+            "rate. Poupanca yields ~70% of SELIC when SELIC > 8.5%"
+        ),
+        category="comparison",
+    ),
+]
+
 
 @app.get("/api/v1/health", response_model=HealthResponse)
 async def get_health() -> HealthResponse:
-    """Get API health status. Lightweight check — no external calls."""
-    return HealthResponse(
-        status="healthy",
-        timestamp=datetime.now(),
-        database_connected=True,
-        last_collection=None,
-    )
+    """Lightweight health check -- only verifies SQLite connectivity."""
+    try:
+        db_exists = _DB_PATH.exists()
+        if db_exists:
+            # Quick SQLite ping -- no data collection
+            conn = sqlite3.connect(str(_DB_PATH), timeout=2)
+            conn.execute("SELECT 1")
+            conn.close()
+
+        return HealthResponse(
+            status="healthy",
+            timestamp=datetime.now(),
+            database_connected=db_exists,
+            last_collection=None,
+        )
+    except Exception as e:
+        return HealthResponse(
+            status="unhealthy",
+            timestamp=datetime.now(),
+            database_connected=False,
+            last_collection=None,
+            error=str(e),
+        )
 
 
 @app.get("/api/v1/funds", response_model=list[FundSummary])
@@ -69,19 +404,24 @@ async def list_funds() -> list[FundSummary]:
         funds_data = await get_fund_metadata()
         return [FundSummary(**fund) for fund in funds_data]
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error retrieving funds: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Error retrieving funds: {e}"
+        ) from e
 
 
-@app.get("/api/v1/funds/{cnpj:path}/performance", response_model=PerformanceResponse)
+@app.get(
+    "/api/v1/funds/{cnpj:path}/performance",
+    response_model=PerformanceResponse,
+)
 async def get_fund_performance(
-    cnpj: str = Path(..., description="Fund CNPJ"),
-    months: Optional[int] = Query(
+    cnpj: str = FastAPIPath(..., description="Fund CNPJ"),
+    months: int | None = Query(
         default=3, ge=1, le=60, description="Number of months for analysis"
     ),
-    start_date: Optional[date] = Query(
+    start_date: date | None = Query(
         default=None, description="Start date (YYYY-MM-DD)"
     ),
-    end_date: Optional[date] = Query(
+    end_date: date | None = Query(
         default=None, description="End date (YYYY-MM-DD)"
     ),
 ) -> PerformanceResponse:
@@ -94,24 +434,25 @@ async def get_fund_performance(
             end_date=end_date,
         )
         return _convert_to_api_response(performance)
-
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        raise HTTPException(status_code=400, detail=str(e)) from e
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Error calculating performance: {e}"
-        )
+            status_code=500,
+            detail=f"Error calculating performance: {e}",
+        ) from e
 
 
 @app.get(
-    "/api/v1/funds/{cnpj:path}/daily", response_model=list[DailyDataResponse]
+    "/api/v1/funds/{cnpj:path}/daily",
+    response_model=list[DailyDataResponse],
 )
 async def get_fund_daily_data_endpoint(
-    cnpj: str = Path(..., description="Fund CNPJ"),
-    from_date: Optional[date] = Query(
+    cnpj: str = FastAPIPath(..., description="Fund CNPJ"),
+    from_date: date | None = Query(
         default=None, alias="from", description="Start date"
     ),
-    to_date: Optional[date] = Query(
+    to_date: date | None = Query(
         default=None, alias="to", description="End date"
     ),
     limit: int = Query(
@@ -138,11 +479,11 @@ async def get_fund_daily_data_endpoint(
             )
             for record in daily_records
         ]
-
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Error retrieving daily data: {e}"
-        )
+            status_code=500,
+            detail=f"Error retrieving daily data: {e}",
+        ) from e
 
 
 @app.get(
@@ -150,10 +491,10 @@ async def get_fund_daily_data_endpoint(
     response_model=list[MetricExplanation],
 )
 async def get_metric_explanations(
-    cnpj: str = Path(..., description="Fund CNPJ"),
+    cnpj: str = FastAPIPath(..., description="Fund CNPJ"),
 ) -> list[MetricExplanation]:
     """Get explanations for all metrics (for tooltips)."""
-    return _build_metric_explanations()
+    return METRIC_EXPLANATIONS
 
 
 @app.post("/api/v1/collect", response_model=CollectionResponse)
@@ -163,10 +504,12 @@ async def trigger_data_collection() -> CollectionResponse:
 
     try:
         records = await asyncio.to_thread(
-            collect_multiple_months, NU_RESERVA_CNPJ, 6
+            collect_multiple_months,
+            NU_RESERVA_CNPJ,
+            6,
         )
 
-        benchmarks = await asyncio.to_thread(
+        await asyncio.to_thread(
             collect_all_benchmarks_sync,
             records[0].date if records else None,
             records[-1].date if records else None,
@@ -181,7 +524,6 @@ async def trigger_data_collection() -> CollectionResponse:
             duration_secs=duration,
             timestamp=datetime.now(),
         )
-
     except Exception as e:
         duration = (datetime.now() - start_time).total_seconds()
         return CollectionResponse(
@@ -193,8 +535,10 @@ async def trigger_data_collection() -> CollectionResponse:
         )
 
 
-def _convert_to_api_response(performance: FundPerformance) -> PerformanceResponse:
-    """Convert domain FundPerformance to API response model with full type safety."""
+def _convert_to_api_response(
+    performance: FundPerformance,
+) -> PerformanceResponse:
+    """Convert domain FundPerformance to API response model."""
     return PerformanceResponse(
         fund=FundSummary(
             cnpj=performance.fund_cnpj,
@@ -238,10 +582,10 @@ def _convert_to_api_response(performance: FundPerformance) -> PerformanceRespons
                 accumulated=round(performance.benchmark_ipca, 4),
                 vs_fund=round(performance.vs_ipca, 0),
             ),
-            cdb=BenchmarkDetail(
+            cdb=BenchmarkEstimate(
                 estimated=round(performance.benchmark_cdi * 0.95, 4),
             ),
-            poupanca=BenchmarkDetail(
+            poupanca=BenchmarkEstimate(
                 estimated=round(performance.benchmark_selic * 0.70, 4),
             ),
         ),
@@ -254,189 +598,12 @@ def _convert_to_api_response(performance: FundPerformance) -> PerformanceRespons
     )
 
 
-def _build_metric_explanations() -> list[MetricExplanation]:
-    """Build comprehensive metric explanations covering all dashboard metrics."""
-    return [
-        # Performance metrics
-        MetricExplanation(
-            key="return_pct",
-            name="Retorno (%)",
-            value=None,
-            explanation="Retorno percentual do fundo no período selecionado. Mostra quanto o investimento valorizou ou desvalorizou.",
-            category="performance",
-        ),
-        MetricExplanation(
-            key="nav_start",
-            name="Cota Inicial",
-            value=None,
-            explanation="Valor da cota no início do período de análise.",
-            category="performance",
-        ),
-        MetricExplanation(
-            key="nav_end",
-            name="Cota Final",
-            value=None,
-            explanation="Valor da cota no final do período de análise.",
-            category="performance",
-        ),
-        MetricExplanation(
-            key="nav_variation",
-            name="Variação da Cota",
-            value=None,
-            explanation="Diferença entre cota final e inicial, indica valorização absoluta.",
-            category="performance",
-        ),
-        # Risk metrics
-        MetricExplanation(
-            key="volatility",
-            name="Volatilidade",
-            value=None,
-            explanation="Mede quanto os retornos do fundo variam dia a dia. Maior volatilidade significa mais risco e incerteza.",
-            category="risk",
-        ),
-        MetricExplanation(
-            key="sharpe_ratio",
-            name="Índice de Sharpe",
-            value=None,
-            explanation="Retorno ajustado ao risco. Valores maiores indicam melhor retorno por unidade de risco. Acima de 1.0 é considerado bom.",
-            category="risk",
-        ),
-        MetricExplanation(
-            key="max_drawdown",
-            name="Máximo Drawdown",
-            value=None,
-            explanation="Maior queda do pico ao vale durante o período. Mostra o pior cenário que o investimento enfrentou.",
-            category="risk",
-        ),
-        MetricExplanation(
-            key="var_95",
-            name="VaR 95%",
-            value=None,
-            explanation="Value at Risk — perda potencial que não será excedida em 95% das condições normais de mercado.",
-            category="risk",
-        ),
-        # Efficiency metrics
-        MetricExplanation(
-            key="alpha",
-            name="Alpha",
-            value=None,
-            explanation="Retorno excedente acima do esperado dado o nível de risco. Alpha positivo indica que o gestor está superando o benchmark.",
-            category="efficiency",
-        ),
-        MetricExplanation(
-            key="beta",
-            name="Beta",
-            value=None,
-            explanation="Sensibilidade aos movimentos do mercado. Beta > 1 = mais volátil que o mercado; < 1 = menos volátil.",
-            category="efficiency",
-        ),
-        # Benchmark comparisons
-        MetricExplanation(
-            key="benchmark_cdi",
-            name="CDI Acumulado",
-            value=None,
-            explanation="Certificado de Depósito Interbancário — principal benchmark para renda fixa no Brasil. Taxa básica de referência entre bancos.",
-            category="benchmark",
-        ),
-        MetricExplanation(
-            key="benchmark_selic",
-            name="SELIC Acumulada",
-            value=None,
-            explanation="Taxa básica de juros da economia brasileira, definida pelo Banco Central a cada 45 dias.",
-            category="benchmark",
-        ),
-        MetricExplanation(
-            key="benchmark_ipca",
-            name="IPCA Acumulado",
-            value=None,
-            explanation="Índice de Preços ao Consumidor Amplo — inflação oficial do Brasil. Comparar com IPCA mostra se o fundo preserva poder de compra.",
-            category="benchmark",
-        ),
-        MetricExplanation(
-            key="vs_cdi",
-            name="vs CDI (bps)",
-            value=None,
-            explanation="Diferença em pontos-base entre o retorno do fundo e o CDI. Positivo = superou o CDI.",
-            category="benchmark",
-        ),
-        MetricExplanation(
-            key="vs_selic",
-            name="vs SELIC (bps)",
-            value=None,
-            explanation="Diferença em pontos-base entre o retorno do fundo e a SELIC. Positivo = superou a SELIC.",
-            category="benchmark",
-        ),
-        MetricExplanation(
-            key="vs_ipca",
-            name="vs IPCA (bps)",
-            value=None,
-            explanation="Diferença em pontos-base entre o retorno do fundo e o IPCA. Positivo = retorno real positivo acima da inflação.",
-            category="benchmark",
-        ),
-        MetricExplanation(
-            key="cdb_estimated",
-            name="CDB Estimado",
-            value=None,
-            explanation="Retorno estimado de um CDB a 95% do CDI no mesmo período. Serve como referência para investimentos bancários.",
-            category="benchmark",
-        ),
-        MetricExplanation(
-            key="poupanca_estimated",
-            name="Poupança Estimada",
-            value=None,
-            explanation="Retorno estimado da poupança (70% da SELIC quando SELIC > 8.5%). Serve como comparação com o investimento mais básico.",
-            category="benchmark",
-        ),
-        # Market context
-        MetricExplanation(
-            key="trend_30d",
-            name="Tendência 30 dias",
-            value=None,
-            explanation="Direção da tendência do fundo nos últimos 30 dias: alta, estável ou queda.",
-            category="market",
-        ),
-        MetricExplanation(
-            key="shareholders",
-            name="Cotistas",
-            value=None,
-            explanation="Número atual de investidores no fundo. Muitos cotistas indicam confiança coletiva no produto.",
-            category="market",
-        ),
-        MetricExplanation(
-            key="equity_millions",
-            name="Patrimônio (R$ MM)",
-            value=None,
-            explanation="Patrimônio líquido total do fundo em milhões de reais. Fundos maiores tendem a ter mais liquidez e estabilidade.",
-            category="market",
-        ),
-        # Flow metrics
-        MetricExplanation(
-            key="deposits",
-            name="Captação",
-            value=None,
-            explanation="Total de aplicações (entradas) no fundo no período. Alta captação indica interesse crescente dos investidores.",
-            category="flow",
-        ),
-        MetricExplanation(
-            key="withdrawals",
-            name="Resgates",
-            value=None,
-            explanation="Total de resgates (saídas) do fundo no período. Resgates altos podem indicar desconfiança ou necessidade de liquidez.",
-            category="flow",
-        ),
-        MetricExplanation(
-            key="net_flow",
-            name="Fluxo Líquido",
-            value=None,
-            explanation="Diferença entre captação e resgates. Positivo = mais dinheiro entrando; negativo = mais saindo.",
-            category="flow",
-        ),
-    ]
-
-
 if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        "market_analysis.api.main:app", host="0.0.0.0", port=8000, reload=True
+        "market_analysis.api.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
     )
