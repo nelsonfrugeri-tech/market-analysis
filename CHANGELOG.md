@@ -7,36 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-04-01
 
-### Security
-#### Frontend Dependencies
-- **Exact version pinning** - All dependencies now use exact versions (no `^` ranges) to prevent automatic updates with potential vulnerabilities
-- **Security audit complete** - Researched and validated all dependencies for LTS status, stability, and security:
-  - [@radix-ui/react-icons](https://security.snyk.io/package/npm/%40radix-ui%2Freact-icons): 1.3.2 - No known vulnerabilities
-  - [@tanstack/react-query](https://security.snyk.io/package/npm/@tanstack/react-query): 5.96.1 - Clean security scan
-  - [recharts](https://security.snyk.io/package/npm/recharts): 3.8.1 - No risks detected, 14M+ weekly downloads
-  - [TailwindCSS](https://tailwindcss.com/blog/tailwindcss-v4): 4.2.2 - Latest stable v4 release
-  - [TypeScript](https://devblogs.microsoft.com/typescript/): 6.0.2 - Latest stable release
-  - [Vitest](https://github.com/vitest-dev/vitest/releases): 4.1.2 - Recent security fixes included
-  - [ESLint](https://eslint.org/blog/2024/04/eslint-v9.0.0-released/): 9.39.4 - Healthy maintenance status
-- **Zero vulnerabilities** - npm audit reports 0 vulnerabilities after dependency updates
-- **Peer dependency compatibility** - Resolved all peer dependency conflicts while maintaining exact versions
-
 ### Added
 
 #### Backend REST API (FastAPI)
-- **6 REST endpoints** with Swagger/OpenAPI documentation
+- **6 REST endpoints** fully implemented and tested:
   - `GET /api/v1/funds` - List available funds
-  - `GET /api/v1/funds/{cnpj}/performance` - Fund performance metrics
-  - `GET /api/v1/funds/{cnpj}/daily` - Daily time series data
-  - `GET /api/v1/funds/{cnpj}/explanations` - Metric explanations
-  - `GET /api/v1/health` - Health check endpoint
-  - `POST /api/v1/collect` - Trigger data collection
-- **Pydantic models** for type-safe validation
-- **CORS support** for localhost:3000 frontend
-- **Async/sync integration** with existing CLI backend
-- **Dynamic query parameters** for filtering and date ranges
-- **Error handling** for data collection failures
-- **Service layer architecture** separating API logic
+  - `GET /api/v1/funds/{cnpj}/performance` - Fund performance with dynamic filters
+  - `GET /api/v1/funds/{cnpj}/daily` - Daily time series data for charts
+  - `GET /api/v1/funds/{cnpj}/explanations` - Metric explanations for UI tooltips
+  - `GET /api/v1/health` - Health check with database status
+  - `POST /api/v1/collect` - Trigger data collection from CVM/BCB
+- **FastAPI Framework** with automatic Swagger/OpenAPI documentation
+- **Pydantic models** for type-safe request/response validation
+- **CORS middleware** configured for localhost:3000 frontend
+- **Async/sync integration** with existing CLI backend using asyncio executors
+- **Dynamic query parameters** for filtering and date range selection
+- **Error handling** for missing data and collection failures
 
 #### Frontend Web Dashboard
 - **Next.js 16.2.2 + React 19.2.4** complete dashboard implementation
@@ -67,11 +53,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **v0.2.0 Architecture diagram** created in `docs/v0.2.0-architecture.drawio`
 - **Complete type definitions** in TypeScript for API contracts
 - **Component documentation** with usage examples and tests
-
-### Security
-- **Dependencies pinned to exact versions** - All frontend dependencies converted from range (`^`) to exact versions (`==`) for security
-- **Validated LTS/stable versions** - Web research conducted for all 27 dependencies to ensure latest stable, secure versions
-- **Zero known vulnerabilities** in dependency chain after security audit
 
 ## [0.1.0] - 2026-03-27
 
