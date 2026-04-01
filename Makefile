@@ -112,7 +112,7 @@ dev: run
 run:
 	@echo "🚀 Starting development servers..."
 	@echo "Backend: http://localhost:8000"
-	@echo "Frontend: http://localhost:3000"
+	@echo "Frontend: http://localhost:3001"
 	@echo "API Docs: http://localhost:8000/api/docs"
 	@echo ""
 	@echo "Press Ctrl+C to stop all servers"

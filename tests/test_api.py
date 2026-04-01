@@ -548,17 +548,17 @@ class TestErrorHandling:
 class TestCORS:
     """CORS configuration tests."""
 
-    def test_cors_allows_localhost_3000(self, client: TestClient) -> None:
-        """Preflight from localhost:3000 returns CORS headers."""
+    def test_cors_allows_localhost_3001(self, client: TestClient) -> None:
+        """Preflight from localhost:3001 returns CORS headers."""
         response = client.options(
             "/api/v1/funds",
             headers={
-                "Origin": "http://localhost:3000",
+                "Origin": "http://localhost:3001",
                 "Access-Control-Request-Method": "GET",
             },
         )
         assert response.headers.get("access-control-allow-origin") == (
-            "http://localhost:3000"
+            "http://localhost:3001"
         )
 
     def test_cors_blocks_unknown_origin(
