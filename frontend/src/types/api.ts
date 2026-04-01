@@ -12,8 +12,11 @@ export interface DateRange {
 export interface Fund {
   cnpj: string
   name: string
-  category: string
+  short_name: string
+  fund_type: string
   manager: string
+  benchmark: string
+  status: string
 }
 
 // Filter types

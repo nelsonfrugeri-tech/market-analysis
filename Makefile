@@ -1,7 +1,7 @@
 # Market Analysis Platform - Development Automation
 # Usage: make <command>
 
-.PHONY: help install test lint run build clean docker dev setup
+.PHONY: help install test lint run build clean dev setup compile compile-backend compile-frontend kill-dev
 
 # Default target
 help:
@@ -30,11 +30,17 @@ help:
 	@echo "  make lint-frontend  - Run Biome on TypeScript code"
 	@echo "  make format         - Format all code (auto-fix)"
 	@echo ""
+	@echo "🏗️ Build & Compile:"
+	@echo "  make compile        - Build production version (backend + frontend)"
+	@echo "  make compile-backend - Build Python application"
+	@echo "  make compile-frontend - Build Next.js for production"
+	@echo ""
 	@echo "🏃 Running:"
 	@echo "  make run            - Start both backend and frontend"
 	@echo "  make run-backend    - Start FastAPI server only"
 	@echo "  make run-frontend   - Start Next.js dev server only"
 	@echo "  make run-cli        - Run CLI analysis tool"
+	@echo "  make kill-dev       - Stop all development processes"
 	@echo ""
 	@echo "🏗️ Building:"
 	@echo "  make build          - Build for production"
@@ -102,7 +108,6 @@ test-coverage:
 	@.venv/bin/python -m pytest tests/ --cov=src/market_analysis --cov-report=html
 	@cd frontend && npm run test:coverage
 	@echo "✅ Coverage reports generated!"
-
 # ==================== CODE QUALITY ====================
 
 lint: lint-backend lint-frontend
@@ -122,18 +127,47 @@ lint-frontend:
 
 format:
 	@echo "🎨 Formatting all code..."
+<<<<<<< HEAD
+	@.venv/bin/python -m ruff format src/ tests/
+	@cd frontend && npm run format
+	@echo "✅ Code formatting completed!"
+
+# ==================== BUILD & COMPILE ====================
+
+compile: compile-backend compile-frontend
+	@echo "✅ Production build completed!"
+
+compile-backend:
+	@echo "🏗️ Building Python application..."
+	@.venv/bin/python -m compileall src/market_analysis/
+	@echo "✅ Backend build completed!"
+
+compile-frontend:
+	@echo "🏗️ Building Next.js for production..."
+	@cd frontend && npm run build
+	@echo "✅ Frontend build completed!"
+
+=======
 	@python -m ruff format src/ tests/
 	@cd frontend && npm run format
 	@echo "✅ Code formatting completed!"
 
+>>>>>>> main
 # ==================== DEVELOPMENT SERVERS ====================
 
 dev: run
 
+<<<<<<< HEAD
+run: kill-dev
+	@echo "🚀 Starting development servers..."
+	@echo "Backend: http://localhost:8000"
+	@echo "Frontend: http://localhost:3001"
+=======
 run:
 	@echo "🚀 Starting development servers..."
 	@echo "Backend: http://localhost:8000"
 	@echo "Frontend: http://localhost:3000"
+>>>>>>> main
 	@echo "API Docs: http://localhost:8000/api/docs"
 	@echo ""
 	@echo "Press Ctrl+C to stop all servers"
@@ -142,6 +176,19 @@ run:
 	 make run-frontend & \
 	 wait
 
+<<<<<<< HEAD
+kill-dev:
+	@echo "🧹 Cleaning up running processes..."
+	@pkill -f "uvicorn" || true
+	@pkill -f "next dev" || true
+	@pkill -f "make dev" || true
+	@lsof -ti :8000 | xargs -r kill -9 2>/dev/null || true
+	@lsof -ti :3001 | xargs -r kill -9 2>/dev/null || true
+	@sleep 1
+	@echo "✅ Ports 8000 and 3001 cleaned!"
+
+=======
+>>>>>>> main
 run-backend:
 	@echo "🐍 Starting FastAPI server..."
 	@.venv/bin/uvicorn market_analysis.api.main:app --reload --port 8000
@@ -155,6 +202,8 @@ run-cli:
 	@.venv/bin/python -m market_analysis.cli --months 3 --output reports/analysis.pdf
 	@echo "✅ Analysis complete! Report saved to reports/analysis.pdf"
 
+<<<<<<< HEAD
+=======
 # ==================== BUILDING ====================
 
 build: build-frontend
@@ -170,6 +219,7 @@ build-docs:
 	@python -c "import webbrowser; webbrowser.open('http://localhost:8000/api/docs')"
 	@echo "✅ API docs available at http://localhost:8000/api/docs"
 
+>>>>>>> main
 # ==================== DATABASE ====================
 
 db-init:
@@ -177,6 +227,8 @@ db-init:
 	@.venv/bin/python -c "from market_analysis.infrastructure.database import get_database; get_database()"
 	@echo "✅ Database initialized!"
 
+<<<<<<< HEAD
+=======
 db-migrate:
 	@echo "🗄️ Running database migrations..."
 	@echo "ℹ️  No migrations system yet - using direct SQLite schema"
@@ -185,6 +237,7 @@ db-seed:
 	@echo "🌱 Seeding database with test data..."
 	@.venv/bin/python -c "from tests.helpers.db_helpers import seed_test_data; seed_test_data()" || echo "⚠️  Test data seeding not available"
 
+>>>>>>> main
 db-reset:
 	@echo "🗄️ Resetting database..."
 	@rm -f data/market_analysis.db
@@ -201,6 +254,15 @@ clean:
 	@rm -rf reports/*.pdf
 	@echo "✅ Clean completed!"
 
+<<<<<<< HEAD
+security-audit:
+	@echo "🔒 Running security audits..."
+	@cd frontend && npm audit
+	@echo "✅ Security audits completed!"
+
+# ==================== UTILITIES ====================
+
+=======
 clean-cache:
 	@echo "🧹 Clearing all caches..."
 	@rm -rf __pycache__ **/__pycache__ .pytest_cache .mypy_cache .ruff_cache
@@ -236,10 +298,21 @@ docker-run:
 check: lint test
 	@echo "✅ All checks passed! Ready for deployment."
 
+>>>>>>> main
 status:
 	@echo "📊 Project Status:"
 	@echo ""
 	@echo "Backend (Python):"
+<<<<<<< HEAD
+	@python3 --version 2>/dev/null || echo "  Python not found"
+	@echo ""
+	@echo "Frontend (Node.js):"
+	@node --version 2>/dev/null || echo "  Node.js not found"
+	@npm --version 2>/dev/null || echo "  npm not found"
+	@echo ""
+	@echo "Database:"
+	@test -f data/market_analysis.db && echo "  ✅ Database exists" || echo "  ❌ Database not initialized"
+=======
 	@python --version
 	@pip show market-analysis | grep Version || echo "  Package not installed"
 	@echo ""
@@ -265,3 +338,4 @@ info:
 	@echo "  • README.md - Complete setup guide"
 	@echo "  • API Docs: http://localhost:8000/api/docs"
 	@echo "  • CHANGELOG.md - Version history"
+>>>>>>> main

@@ -82,6 +82,7 @@ POST   /api/v1/collect                          # Trigger data collection
 - **Node.js 18+** (for frontend development)
 - **Make** (for automated commands)
 - **Git**
+- **macOS** (current deployment target)
 
 ### One-Command Setup
 ```bash
@@ -89,7 +90,7 @@ POST   /api/v1/collect                          # Trigger data collection
 git clone https://github.com/nelsonfrugeri-tech/market-analysis.git
 cd market-analysis
 
-# Complete setup (install deps + init database)
+# Complete setup (install dependencies + initialize database)
 make setup
 
 # Start development servers
@@ -101,6 +102,9 @@ make dev
 # Install dependencies (backend + frontend)
 make install
 
+# Or install individually
+make install-backend
+make install-frontend
 # Initialize database
 make db-init
 
@@ -142,7 +146,7 @@ MA_ANTHROPIC_API_KEY=your_anthropic_key
 MA_LOG_LEVEL=INFO
 ```
 
-## 🧪 Testing & Validation
+## 🧪 Testing & Development
 
 ### Quick Testing
 ```bash
