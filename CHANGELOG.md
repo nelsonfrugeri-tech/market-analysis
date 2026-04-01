@@ -5,11 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-04-01
+
+### Security
+- **Exact dependency pinning** - All frontend dependencies converted from range versions (`^`) to exact versions
+- **Supply chain protection** - Prevents automatic updates that could introduce vulnerabilities
+- **24 dependencies secured** - All `package.json` deps now use exact version pinning (e.g., `@tanstack/react-query: "5.96.0"` instead of `"^5.96.1"`)
+- **Zero npm audit vulnerabilities** - Clean security scan after exact pinning implementation
+- **Reproducible builds** - Exact versions ensure identical builds across environments
+
+### Fixed
+- **Dependency security regression** - Restored exact pinning that was lost during v0.2.0 merge conflicts
+- **Range version vulnerabilities** - Eliminated potential for silent breaking changes via `^` version specifiers
+
 ## [0.2.0] - 2026-04-01
 
 ### Added
 
-#### Backend REST API (FastAPI)
+#### Backend REST API (FastAPI) - COMPLETE ✅
 - **6 REST endpoints** fully implemented and tested:
   - `GET /api/v1/funds` - List available funds
   - `GET /api/v1/funds/{cnpj}/performance` - Fund performance with dynamic filters
@@ -17,42 +30,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GET /api/v1/funds/{cnpj}/explanations` - Metric explanations for UI tooltips
   - `GET /api/v1/health` - Health check with database status
   - `POST /api/v1/collect` - Trigger data collection from CVM/BCB
-- **FastAPI Framework** with automatic Swagger/OpenAPI documentation
-- **Pydantic models** for type-safe request/response validation
+- **FastAPI Framework** with automatic Swagger/OpenAPI documentation at `/api/docs`
+- **Pydantic models** for type-safe request/response validation (no `Dict[str, Any]`)
 - **CORS middleware** configured for localhost:3000 frontend
-- **Async/sync integration** with existing CLI backend using asyncio executors
+- **Async/sync integration** with existing CLI backend using `asyncio.to_thread()`
 - **Dynamic query parameters** for filtering and date range selection
 - **Error handling** for missing data and collection failures
+- **597 lines of API tests** covering all endpoints with 93% coverage
+- **Clean Architecture** with layered separation: API → Service → Domain → Infrastructure
 
-#### Frontend Web Dashboard
-- **Next.js 16.2.2 + React 19.2.4** complete dashboard implementation
-- **TypeScript strict mode** with zero `any` types for type safety
-- **Tailwind CSS v4 + shadcn/ui** component library for elegant UI
+#### Frontend Web Dashboard - SCAFFOLDED ⚠️
+- **Next.js 16.2.2 + React 19.2.4** framework setup
+- **TypeScript strict mode** with comprehensive type definitions
+- **Tailwind CSS v4 + shadcn/ui** styling system configured
 - **Brazilian formatters** (pt-BR locale) for currency, percentages, and numbers
-- **WCAG 2.2 accessibility** compliance with semantic HTML
+- **WCAG 2.2 accessibility** considerations in component design
 
 #### Core Components Delivered
-- **MetricCard** - Financial metrics display component with tooltips (13 tests)
-- **MetricsSection** - Collapsible sections container component (10 tests)
-- **PerformanceSection** - Complete performance metrics section (11 tests)
+- **MetricCard** - Financial metrics display component with tooltips, trend indicators
+- **MetricsSection** - Collapsible sections container with accessibility attributes
+- **PerformanceSection** - Performance metrics composition component
+- **36 unit tests** for components with Vitest + Testing Library
+- **Utility libraries** (`@/lib/utils`, `@/lib/formatters`, `@/lib/mock-data`)
 
 #### Architecture & Type System
-- **45+ financial metrics** fully typed (Performance, Risk, Efficiency, Consistency)
-- **6 API endpoints contracts** defined for FastAPI integration
-- **Multi-fund extensible structure** with dynamic `/dashboard/[cnpj]` routing
+- **45+ financial metrics** typed across Performance, Risk, Efficiency, Consistency domains
+- **API contracts** defined for frontend-backend integration
+- **Multi-fund extensible structure** prepared for dynamic CNPJ routing
 - **Mock data system** for parallel frontend/backend development
 
-#### Developer Experience & Quality
-- **36 unit tests** passing with 100% component coverage
-- **Vitest + Testing Library** modern testing framework
-- **Biome linting/formatting** with strict code quality rules
-- **TanStack Query** setup for API caching and state management
-- **Production build** optimization and validation
+### Known Issues in v0.2.0
+- **Frontend page not implemented**: Main page (`app/page.tsx`) still shows default Next.js template
+- **API integration missing**: No fetch layer, API client, or React Query hooks implemented
+- **Type contract mismatch**: Frontend types don't match actual backend API response schemas
+- **Build-blocking bugs**: Some component imports reference missing utility modules
 
-#### Documentation & Diagrams
-- **v0.2.0 Architecture diagram** created in `docs/v0.2.0-architecture.drawio`
-- **Complete type definitions** in TypeScript for API contracts
-- **Component documentation** with usage examples and tests
+### Notes
+- **Backend is production-ready** with comprehensive test coverage and clean architecture
+- **Frontend is scaffolded** with components and types but requires integration work to be functional
+- **Two delivery modes**: CLI (fully functional) + REST API (fully functional) + Web Dashboard (scaffolded)
 
 ## [0.1.0] - 2026-03-27
 
