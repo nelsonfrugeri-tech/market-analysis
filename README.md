@@ -1,33 +1,79 @@
-# Brazilian Investment Fund Analysis System
+# Market Analysis Platform
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
-[![Production Ready](https://img.shields.io/badge/status-production%20ready-green.svg)](https://github.com/nelsonfrugeri-tech/market-analysis/releases/tag/v0.1.0)
-[![Local Execution](https://img.shields.io/badge/platform-macOS-lightgrey.svg)](https://www.apple.com/macos/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.135-green.svg)](https://fastapi.tiangolo.com/)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16.2-blue.svg)](https://nextjs.org/)
+[![Production Ready](https://img.shields.io/badge/backend-production%20ready-green.svg)](https://github.com/nelsonfrugeri-tech/market-analysis)
+[![Frontend](https://img.shields.io/badge/frontend-scaffolded-orange.svg)](https://github.com/nelsonfrugeri-tech/market-analysis)
 
-A comprehensive fund analysis system designed for **Brazilian investment fund** analysis. The system automatically collects data from Brazilian financial regulators (CVM, BCB), analyzes performance against benchmarks, and generates professional PDF reports with automated email delivery.
+A comprehensive **Brazilian investment fund analysis platform** with multiple delivery modes. Automatically collects data from Brazilian financial regulators (CVM, BCB), analyzes performance against benchmarks, and delivers insights through CLI, REST API, and web dashboard interfaces.
+
+## 🏗️ System Architecture
+
+The platform provides **three delivery modes** for accessing fund analysis capabilities:
+
+### 1. **CLI Interface** (Production Ready ✅)
+Command-line tool for automated data collection, analysis, and PDF report generation with email delivery.
+
+### 2. **REST API** (Production Ready ✅)
+FastAPI-based REST service with 6 endpoints for programmatic access to fund data and metrics.
+
+### 3. **Web Dashboard** (Scaffolded ⚠️)
+Next.js frontend with React components and TypeScript types (integration in progress).
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   CLI Interface │    │   REST API      │    │  Web Dashboard  │
+│   (Complete)    │    │   (Complete)    │    │   (Scaffolded)  │
+└─────────┬───────┘    └─────────┬───────┘    └─────────┬───────┘
+          │                      │                      │
+          └──────────┬───────────┼──────────────────────┘
+                     │           │
+            ┌─────────▼───────────▼──────────┐
+            │     Service Layer              │
+            │  • Data Collection             │
+            │  • Performance Calculation     │
+            │  • Report Generation           │
+            └─────────┬──────────────────────┘
+                      │
+            ┌─────────▼──────────┐
+            │  Infrastructure    │
+            │  • SQLite Database │
+            │  • CVM/BCB APIs    │
+            │  • AI Explanations │
+            └────────────────────┘
+```
 
 ## 🎯 Key Features
 
 ### 📊 **Data Collection Pipeline**
-- **CVM Integration**: Automated download and processing of daily fund data from Brazilian Securities Commission
-- **BCB Integration**: Real-time collection of economic indicators (SELIC, CDI, IPCA) from Central Bank of Brazil
-- **News Aggregation**: Google RSS feed integration for fund-related news and market updates
+- **CVM Integration**: Daily fund data from Brazilian Securities Commission
+- **BCB Integration**: Economic indicators (SELIC, CDI, IPCA) from Central Bank
+- **News Aggregation**: RSS feed integration for market context
+- **AI Explanations**: 29 metric explanations via DeepSeek/Ollama integration
 
 ### 📈 **Performance Analysis Engine**
-- **Benchmark Comparison**: Fund performance vs SELIC, CDI, and IPCA benchmarks
-- **Period Analysis**: Configurable analysis periods (1, 3, 6 months)
-- **Performance Metrics**: Detailed return calculations and performance attribution
+- **Comprehensive Metrics**: 45+ financial metrics across Performance, Risk, Efficiency domains
+- **Benchmark Comparisons**: Fund vs SELIC, CDI, IPCA, CDB, Poupança
+- **Period Analysis**: Flexible date ranges and filtering
+- **Brazilian Compliance**: CVM-compliant calculations and formatting
 
-### 📄 **Professional Reporting**
-- **PDF Generation**: Professional reports with charts and performance visualizations
-- **Email Automation**: Automated delivery via Gmail SMTP integration
-- **Rich Visualizations**: matplotlib-powered charts and data presentations
+### 🔌 **REST API (v0.2.0)**
+```bash
+GET    /api/v1/health                            # System health check
+GET    /api/v1/funds                             # List available funds
+GET    /api/v1/funds/{cnpj}/performance          # Performance metrics + benchmarks
+GET    /api/v1/funds/{cnpj}/daily                # Time series data for charts
+GET    /api/v1/funds/{cnpj}/explanations         # Metric explanations for tooltips
+POST   /api/v1/collect                          # Trigger data collection
+```
 
-### 🔧 **Technical Architecture**
-- **SQLite Database**: WAL mode for concurrent access with 8-table schema
-- **Protocol-Based Design**: Structural typing with Python Protocols
-- **Async Processing**: Modern async/await patterns for optimal performance
-- **Pydantic v2**: Advanced data validation and serialization
+**API Documentation**: Automatic Swagger/OpenAPI at `/api/docs`
+
+### 📄 **Reporting & Delivery**
+- **PDF Generation**: Professional reports with matplotlib charts
+- **Email Automation**: SMTP delivery with configurable templates
+- **Web Interface**: React components for interactive dashboards (in development)
 
 ## 🚀 Quick Start
 
@@ -35,11 +81,12 @@ A comprehensive fund analysis system designed for **Brazilian investment fund** 
 - **Python 3.12+**
 - **Node.js 18+** (for frontend development)
 - **Make** (for automated commands)
+- **Git**
 - **macOS** (current deployment target)
 
 ### One-Command Setup
 ```bash
-# Clone the repository
+# Clone repository
 git clone https://github.com/nelsonfrugeri-tech/market-analysis.git
 cd market-analysis
 
@@ -50,35 +97,54 @@ make setup
 make dev
 ```
 
-### Manual Installation
+### Manual Setup
 ```bash
-# Install all dependencies
+# Install dependencies (backend + frontend)
 make install
 
 # Or install individually
 make install-backend
 make install-frontend
-
 # Initialize database
 make db-init
 
 # Configure environment
 cp .env.example .env
-# Edit .env with your Gmail credentials
+# Edit .env with your credentials
+```
+
+### Individual Commands
+```bash
+# Backend only
+make install-backend
+make run-backend
+
+# Frontend only
+make install-frontend
+make run-frontend
 ```
 
 ### Configuration
-Create a `.env` file with the following variables:
+Create `.env` file with required variables:
+
 ```env
-# SMTP Configuration for Email Delivery
-MA_SMTP_USERNAME=<your_gmail_address>
-MA_SMTP_PASSWORD=<your_gmail_app_password>
-MA_SMTP_SENDER_EMAIL=<your_gmail_address>
+# Database
+MA_DB_PATH=data/market_analysis.db
+
+# SMTP (for email reports)
 MA_SMTP_HOST=smtp.gmail.com
 MA_SMTP_PORT=587
-```
+MA_SMTP_USERNAME=your_email@gmail.com
+MA_SMTP_PASSWORD=your_app_password
+MA_SMTP_SENDER_EMAIL=your_email@gmail.com
 
-> **⚠️ Important**: Replace the placeholder values above with your actual Gmail credentials. Use Gmail App Passwords for authentication.
+# AI Integration (optional)
+MA_OLLAMA_BASE_URL=http://localhost:11434
+MA_ANTHROPIC_API_KEY=your_anthropic_key
+
+# Logging
+MA_LOG_LEVEL=INFO
+```
 
 ## 🧪 Testing & Development
 
@@ -88,225 +154,408 @@ MA_SMTP_PORT=587
 make test
 
 # Run with coverage reports
-make test-backend
+make test-coverage
 
-# Quality check (lint + format)
-make lint format
+# Quick quality check (lint + test)
+make check
 ```
 
-### Development Workflow
+### Detailed Testing
+
+#### Backend Tests
 ```bash
-# Start development servers
-make dev
-# Access: Backend (http://localhost:8000) + Frontend (http://localhost:3000)
+# All backend tests with coverage
+make test-backend
 
-# Make changes, then test
-make test
+# API integration tests only
+make test-api
 
-# Check code quality
+# End-to-end with real CVM/BCB data
+make test-e2e
+```
+
+#### Frontend Tests
+```bash
+# React component tests
+make test-frontend
+
+# Type checking
+cd frontend && npm run type-check
+
+# Build validation
+make build-frontend
+```
+
+#### Code Quality
+```bash
+# Run all linters and formatters
 make lint
 
-# Format code
+# Python code quality
+make lint-backend    # ruff + mypy
+
+# TypeScript code quality
+make lint-frontend   # Biome + tsc
+
+# Auto-format all code
 make format
 ```
 
-### Available Commands
+### Validation Checklist
+
+Before committing changes, run:
 ```bash
-make help              # Show all available commands
-make setup             # Complete project setup
-make test              # Run all tests
-make test-backend      # Python tests with coverage
-make test-frontend     # React component tests
-make lint              # Code quality checks
-make run-backend       # Start FastAPI server
-make run-frontend      # Start Next.js dev server
-make db-init           # Initialize database
-make clean             # Clean build artifacts
-make status            # Project status check
+# 1. Full test suite
+make test
+
+# 2. Code quality checks
+make lint
+
+# 3. Security audit
+make security-audit
+
+# 4. Build validation
+make build
+
+# All-in-one check
+make check
 ```
 
-### Usage
+### Test Coverage
+
+**Current Coverage:**
+- **Backend**: 93% API coverage + comprehensive unit tests
+- **Frontend**: 36 component tests with 100% component coverage
+- **Integration**: End-to-end tests with real CVM/BCB APIs
+
+**Coverage Reports:**
 ```bash
-# Run complete analysis with 3-month period
+# Generate HTML coverage reports
+make test-coverage
+
+# View backend coverage
+open htmlcov/index.html
+
+# View frontend coverage
+cd frontend && npm run test:coverage
+```
+
+### Database Testing
+```bash
+# Reset database for clean tests
+make db-reset
+
+# Seed with test data
+make db-seed
+
+# Test database connectivity
+make run-backend
+curl http://localhost:8000/api/v1/health
+```
+
+### Development Workflow
+```bash
+# 1. Start development
+make dev
+
+# 2. Make changes...
+
+# 3. Test changes
+make test
+
+# 4. Lint and format
+make lint format
+
+# 5. Commit (if all pass)
+git add . && git commit -m "feat: ..."
+```
+
+## 📋 Usage Examples
+
+### Development Mode
+```bash
+# Start both backend and frontend
+make dev
+
+# Access interfaces:
+# • Backend API: http://localhost:8000
+# • Frontend: http://localhost:3000
+# • API Docs: http://localhost:8000/api/docs
+```
+
+### CLI Interface
+```bash
+# Quick analysis using make
+make run-cli
+
+# Manual CLI commands
 python -m market_analysis.cli --months 3 --email recipient@email.com
-
-# Generate PDF only (no email)
 python -m market_analysis.cli --months 1 --output report.pdf
-
-# Run end-to-end test
-python test_end_to_end.py --email test@email.com
+python -m market_analysis.cli --collect-only
 ```
 
-## 📋 System Architecture
+### REST API
+```bash
+# Start API server
+make run-backend
+
+# Test endpoints
+curl http://localhost:8000/api/v1/health
+curl http://localhost:8000/api/v1/funds
+curl "http://localhost:8000/api/v1/funds/26.331.064%2F0001-48/performance?months=3"
+
+# View interactive docs
+open http://localhost:8000/api/docs
+```
+
+### Web Dashboard
+```bash
+# Start frontend only
+make run-frontend
+
+# Or start full stack
+make dev
+
+# Access dashboard
+open http://localhost:3000
+```
+
+### Production Build
+```bash
+# Build for production
+make build
+
+# Test production build
+make build-frontend && cd frontend && npm start
+```
+
+## 🏛️ Technical Architecture
+
+### Backend Architecture (Clean Architecture)
+```
+src/market_analysis/
+├── api/                    # FastAPI REST interface
+│   ├── main.py            # App + 6 endpoints
+│   ├── models.py          # Pydantic response schemas
+│   └── service.py         # Service orchestration
+├── application/           # Application services
+│   ├── config.py          # pydantic-settings configuration
+│   ├── performance.py     # Performance calculations
+│   └── retry.py           # Retry logic
+├── domain/                # Business domain
+│   ├── models/            # Domain models (dataclasses)
+│   ├── interfaces.py      # Protocols/interfaces
+│   ├── exceptions.py      # Exception hierarchy
+│   └── schemas.py         # Domain schemas
+├── infrastructure/        # External integrations
+│   ├── cvm_collector.py   # CVM API integration
+│   ├── benchmarks/        # BCB rates collection
+│   ├── database/          # SQLite repositories
+│   ├── pdf_generator.py   # ReportLab PDF generation
+│   └── email_sender.py    # SMTP delivery
+├── ai/                    # AI/LLM integration
+│   ├── explainer.py       # Metric explanations
+│   ├── clients/           # LLM clients (Anthropic, Ollama)
+│   └── templates/         # Prompt templates
+└── cli.py                 # Command-line interface
+```
+
+### Frontend Architecture (Next.js App Router)
+```
+frontend/src/
+├── app/                   # Next.js App Router
+│   └── page.tsx          # Main dashboard page (scaffolded)
+├── components/
+│   ├── ui/               # Reusable UI components
+│   │   ├── metric-card.tsx      # Financial metrics display
+│   │   └── metrics-section.tsx  # Collapsible sections
+│   └── metrics/          # Domain-specific components
+│       └── performance-section.tsx  # Performance metrics
+├── types/                # TypeScript definitions
+│   ├── api.ts           # API contract types
+│   └── components.ts    # Component prop types
+├── lib/                 # Utility libraries
+│   ├── utils.ts         # General utilities
+│   ├── formatters.ts    # Brazilian number/currency formatting
+│   └── mock-data.ts     # Development mock data
+└── test/                # Component tests (Vitest)
+```
 
 ### Database Schema
-The system uses SQLite with the following 8-table structure:
-- `funds_metadata` - Fund registration and basic information
-- `daily_data` - Daily fund performance data from CVM
-- `bcb_data` - Economic indicators from Central Bank
-- `news_data` - Aggregated news and market updates
+**SQLite** with 8 tables for comprehensive fund analysis:
+- `funds_metadata` - Fund registration information
+- `daily_data` - Daily NAV and performance data
+- `bcb_data` - Economic benchmark indicators
+- `news_data` - Market news and context
 - `performance_metrics` - Calculated performance indicators
-- `fund_benchmarks` - Benchmark comparison data
+- `fund_benchmarks` - Benchmark comparison results
 - `fund_performance` - Historical performance analysis
 - `analysis_reports` - Generated report metadata
 
-### Data Flow
-```
-CVM API → SQLite ↘
-BCB API → SQLite → Analysis Engine → PDF Generator → Email Delivery
-News RSS → SQLite ↗
-```
-
 ## 🧪 Testing & Quality
 
-### Test Suite
-- **End-to-End Testing**: Real API validation with live data
-- **Integration Testing**: Database and external service integration
-- **Unit Testing**: Individual component validation
-
-### Run Tests
+### Backend Tests
 ```bash
-# End-to-end test with real data
+# Run all tests
+python -m pytest tests/
+
+# API tests (21 tests covering all endpoints)
+python -m pytest tests/test_api.py
+
+# Integration tests
+python -m pytest tests/integration/
+
+# End-to-end with real data
 python test_end_to_end.py --email your@email.com
-
-# System validation
-python validate_system.py
-
-# Schema integration test
-python test_schema_integration.py
 ```
 
-## 📊 Current Scope
+### Frontend Tests
+```bash
+# Component tests
+cd frontend
+npm test
 
-### Target Fund Configuration
-- **Configurable Fund Analysis**: System supports any Brazilian investment fund via CNPJ
-- **Current Example**: Nu Reserva Planejada (CNPJ: 43.121.002/0001-41)
-- **Fund Types**: Optimized for fixed-income and conservative investment funds
+# Coverage report
+npm run test:coverage
+```
 
-### Benchmarks
-- **SELIC**: Brazilian central bank rate
-- **CDI**: Interbank deposit rate
-- **IPCA**: Brazilian inflation index
+### Test Coverage
+- **Backend**: 93% API coverage, comprehensive unit and integration tests
+- **Frontend**: 36 component tests with 100% component coverage
+- **E2E**: Real API validation with live CVM/BCB data
 
-### Data Sources
-- **CVM** (Brazilian Securities Commission): Daily fund data
-- **BCB** (Central Bank of Brazil): Economic indicators
-- **Google News RSS**: Market news and updates
+## 📊 Current State (v0.2.0)
+
+### ✅ **Production Ready**
+- **CLI Interface**: Complete fund analysis pipeline with PDF reports
+- **REST API**: 6 endpoints with comprehensive testing and documentation
+- **Data Collection**: Automated CVM/BCB integration with error handling
+- **Database**: Robust SQLite schema with WAL mode for concurrency
+
+### ⚠️ **Development State**
+- **Web Dashboard**: Components scaffolded but main page not implemented
+- **API Integration**: Frontend-backend integration layer in progress
+- **Type Alignment**: Frontend types need alignment with actual API schemas
+
+### 🔧 **Known Issues**
+- **Frontend Build**: Missing utility module imports prevent compilation
+- **Type Contracts**: API response types don't match frontend expectations
+- **Integration**: No fetch layer or React Query hooks implemented yet
 
 ## 🗺️ Roadmap
 
-### v0.1.0 (Current) - ✅ Production Ready
-- Complete local execution system
-- CVM/BCB/News data collection
-- PDF reporting with email delivery
-- End-to-end testing suite
+### v0.2.1 (In Progress) - Frontend Integration
+- ✅ **Dependency Security**: Exact version pinning for supply chain protection
+- 🚧 **API Integration**: React Query hooks and fetch layer implementation
+- 🚧 **Type Alignment**: Sync frontend types with backend schemas
+- 🚧 **Dashboard Pages**: Implement main dashboard and fund detail pages
 
-### v0.2.0 (Planned) - 🚧 Automation
-- GitHub Actions integration
-- Scheduled daily execution (9 AM Brazil time)
-- Enhanced error handling and monitoring
-- Improved local execution setup
+### v0.3.0 (Planned) - Enhanced Analytics
+- **Multi-Fund Support**: Analyze and compare multiple funds
+- **Advanced Metrics**: Risk-adjusted returns, Sharpe ratios, drawdown analysis
+- **Portfolio Analysis**: Multi-fund portfolio performance tracking
+- **Historical Trends**: Long-term performance visualization
 
-### v0.3.0 (Future) - 📈 Enhanced Analytics
-- Multi-fund support
-- Advanced performance metrics
-- Risk analysis and attribution
-- Historical trend analysis
-
-### v0.4.0 (Future) - 🌐 Platform Expansion
-- Web dashboard interface
-- Real-time data updates
-- Portfolio-level analysis
-- Custom benchmark creation
+### v0.4.0 (Future) - Platform Features
+- **Authentication**: User accounts and fund watchlists
+- **Real-time Updates**: WebSocket integration for live data
+- **Custom Benchmarks**: User-defined comparison benchmarks
+- **Export Features**: Excel, CSV, and advanced PDF exports
 
 ## 🔧 Development
 
-### Project Structure
-```
-market-analysis/
-├── src/market_analysis/           # Main package
-│   ├── domain/                    # Business logic & models
-│   ├── infrastructure/            # External integrations
-│   ├── collectors/               # Data collection services
-│   └── reports/                  # PDF generation
-├── tests/                        # Test suite
-├── scripts/                      # Utility scripts
-└── reports/                      # Generated reports
-```
-
 ### Tech Stack
-- **Python 3.12+**: Core runtime
-- **SQLite**: Data persistence with WAL mode
-- **Pydantic v2**: Data validation and serialization
-- **ReportLab**: PDF generation
-- **matplotlib**: Chart generation
-- **aiohttp/requests**: HTTP clients for API integration
-- **feedparser**: RSS feed processing
+
+**Backend:**
+- **Python 3.12+**: Core runtime with modern async/await
+- **FastAPI 0.135**: REST API framework with automatic docs
+- **Pydantic 2.12**: Data validation and serialization
+- **SQLite + aiosqlite**: Database with async access
+- **ReportLab**: Professional PDF generation
+- **structlog**: Structured logging
+- **httpx**: Async HTTP client for external APIs
+
+**Frontend:**
+- **Next.js 16.2**: React framework with App Router
+- **React 19.2**: Latest React with new features
+- **TypeScript 5.7**: Strict type checking
+- **Tailwind CSS 4.2**: Utility-first styling
+- **TanStack Query**: Data fetching and caching
+- **Vitest**: Modern testing framework
 
 ### Development Workflow
-1. **Feature Branch**: Create feature branch from main
-2. **Development**: Implement changes with tests
-3. **Pull Request**: Open PR for code review
-4. **Testing**: Run end-to-end validation
-5. **Merge**: Merge to main after approval
+1. **Feature Branch**: Branch from main for new features
+2. **Testing**: Write tests for backend changes, component tests for frontend
+3. **Quality**: Run linting (ruff/biome) and type checking (mypy/tsc)
+4. **Pull Request**: Open PR with comprehensive description
+5. **Code Review**: Team review with focus on architecture and testing
+6. **Integration**: Merge after all checks pass
 
-## 📈 Performance & Scalability
+### Development Automation
 
-### Current Performance
-- **Data Processing**: 57+ daily records in <10 seconds
-- **API Efficiency**: Concurrent collection from multiple sources
-- **Memory Usage**: Optimized for large dataset processing
-- **PDF Generation**: 118KB+ reports with charts in <5 seconds
+All development tasks are automated via **Makefile**:
+```bash
+# See all available commands
+make help
 
-### Scalability Considerations
-- **Database**: SQLite WAL mode for concurrent access
-- **API Limits**: Respectful rate limiting for external APIs
-- **Memory Management**: Streaming processing for large datasets
-- **Error Handling**: Exponential backoff and retry logic
+# Common development tasks
+make setup          # Complete project setup
+make dev            # Start development servers
+make test           # Run all tests
+make lint           # Code quality checks
+make clean          # Clean build artifacts
+```
+
+### Environment Setup
+```bash
+# Automated setup (recommended)
+make setup
+
+# Manual setup
+pip install -e ".[dev]"
+cd frontend && npm install
+
+# Development workflow
+make dev            # Start servers
+make test           # Run tests
+make lint format    # Quality checks
+```
 
 ## 🤝 Contributing
 
-### Development Setup
-```bash
-# Fork and clone
-git clone https://github.com/YOUR_USERNAME/market-analysis.git
-
-# Install development dependencies
-pip install -e ".[dev]"
-
-# Run tests
-python -m pytest tests/
-
-# Run linting
-python -m flake8 src/
-```
-
 ### Code Standards
-- **Python 3.12+** features and syntax
-- **Type hints** for all public APIs
-- **Docstrings** following Google style
-- **Test coverage** for new features
-- **Error handling** with proper logging
-
-## 📄 License & Acknowledgments
+- **Python**: Type hints, docstrings, async/await patterns
+- **TypeScript**: Strict mode, comprehensive type definitions
+- **Testing**: Unit tests for new features, integration tests for APIs
+- **Documentation**: Update README and API docs for user-facing changes
 
 ### Team
-- **Mr. Robot**: Architecture & Infrastructure
-- **Elliot Alderson**: Implementation & Data Collection
-- **Tyrell Wellick**: Business Logic & PDF Generation
+- **Mr. Robot**: System Architecture & REST API Infrastructure
+- **Elliot Alderson**: Backend Implementation & Data Collection Systems
+- **Tyrell Wellick**: Frontend Development & Business Logic
 
-### Data Sources
+## 📄 License & Data Sources
+
+### Data Providers
 - **CVM** (Comissão de Valores Mobiliários): Brazilian Securities Commission
-- **BCB** (Banco Central do Brasil): Central Bank of Brazil
-- **Google News**: Market news and updates
+- **BCB** (Banco Central do Brasil): Central Bank of Brazil economic indicators
+- **RSS Feeds**: Market news aggregation
+
+### External APIs
+- **Ollama**: Local LLM for metric explanations
+- **Anthropic Claude**: Alternative AI explanation provider
 
 ---
 
+**📚 Documentation**
+- [API Reference](http://localhost:8000/api/docs) - Interactive Swagger documentation
+- [Changelog](CHANGELOG.md) - Version history and feature additions
+- [Database Schema](docs/database-schema.md) - Complete schema documentation
+
 **🔗 Links**
 - [Repository](https://github.com/nelsonfrugeri-tech/market-analysis)
-- [Releases](https://github.com/nelsonfrugeri-tech/market-analysis/releases)
 - [Issues](https://github.com/nelsonfrugeri-tech/market-analysis/issues)
-- [Changelog](CHANGELOG.md)
+- [Releases](https://github.com/nelsonfrugeri-tech/market-analysis/releases)
 
-**📧 Contact**
-For questions or support, please open an issue in the GitHub repository.
+**📧 Support**
+For questions, feature requests, or bug reports, please open an issue in the GitHub repository.

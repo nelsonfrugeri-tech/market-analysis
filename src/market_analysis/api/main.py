@@ -32,6 +32,7 @@ from .models import (
     PeriodInfo,
     RiskMetrics,
 )
+from .analysis_router import router as analysis_router
 from .service import (
     calculate_fund_performance,
     get_fund_daily_data,
@@ -41,7 +42,7 @@ from .service import (
 app = FastAPI(
     title="Market Analysis API",
     description="Investment fund analysis and metrics API",
-    version="0.2.0",
+    version="0.3.0",
     docs_url="/api/docs",
     redoc_url="/api/redoc",
     openapi_url="/api/openapi.json",
@@ -55,6 +56,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Include analysis router
+app.include_router(analysis_router)
 
 # Database path for lightweight health check
 _DB_PATH = Path("data/market_analysis.db")
