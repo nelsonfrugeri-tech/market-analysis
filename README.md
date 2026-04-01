@@ -33,17 +33,34 @@ A comprehensive fund analysis system designed for **Brazilian investment fund** 
 
 ### Prerequisites
 - **Python 3.12+**
+- **Node.js 18+** (for frontend development)
+- **Make** (for automated commands)
 - **macOS** (current deployment target)
-- **Gmail App Password** for email delivery
 
-### Installation
+### One-Command Setup
 ```bash
 # Clone the repository
 git clone https://github.com/nelsonfrugeri-tech/market-analysis.git
 cd market-analysis
 
-# Install dependencies
-pip install -e .
+# Complete setup (install dependencies + initialize database)
+make setup
+
+# Start development servers
+make dev
+```
+
+### Manual Installation
+```bash
+# Install all dependencies
+make install
+
+# Or install individually
+make install-backend
+make install-frontend
+
+# Initialize database
+make db-init
 
 # Configure environment
 cp .env.example .env
@@ -62,6 +79,51 @@ MA_SMTP_PORT=587
 ```
 
 > **⚠️ Important**: Replace the placeholder values above with your actual Gmail credentials. Use Gmail App Passwords for authentication.
+
+## 🧪 Testing & Development
+
+### Quick Testing
+```bash
+# Test everything (backend + frontend)
+make test
+
+# Run with coverage reports
+make test-backend
+
+# Quality check (lint + format)
+make lint format
+```
+
+### Development Workflow
+```bash
+# Start development servers
+make dev
+# Access: Backend (http://localhost:8000) + Frontend (http://localhost:3000)
+
+# Make changes, then test
+make test
+
+# Check code quality
+make lint
+
+# Format code
+make format
+```
+
+### Available Commands
+```bash
+make help              # Show all available commands
+make setup             # Complete project setup
+make test              # Run all tests
+make test-backend      # Python tests with coverage
+make test-frontend     # React component tests
+make lint              # Code quality checks
+make run-backend       # Start FastAPI server
+make run-frontend      # Start Next.js dev server
+make db-init           # Initialize database
+make clean             # Clean build artifacts
+make status            # Project status check
+```
 
 ### Usage
 ```bash
