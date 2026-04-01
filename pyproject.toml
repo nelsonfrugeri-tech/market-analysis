@@ -14,8 +14,8 @@ dependencies = [
     "matplotlib==3.10.8",
     "structlog==25.5.0",
     "apscheduler==3.11.2",
-    "fastapi==0.135.2",
-    "uvicorn[standard]==0.41.0",
+    "fastapi==0.135.3",
+    "uvicorn[standard]==0.42.0",
 ]
 
 [project.optional-dependencies]
