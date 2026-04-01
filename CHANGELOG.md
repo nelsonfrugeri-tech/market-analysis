@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-04-01
+
+### Security
+- **Exact dependency pinning** - All frontend dependencies converted from range versions (`^`) to exact versions
+- **Supply chain protection** - Prevents automatic updates that could introduce vulnerabilities
+- **24 dependencies secured** - All `package.json` deps now use exact version pinning (e.g., `@tanstack/react-query: "5.96.0"` instead of `"^5.96.1"`)
+- **Zero npm audit vulnerabilities** - Clean security scan after exact pinning implementation
+- **Reproducible builds** - Exact versions ensure identical builds across environments
+
+### Fixed
+- **Dependency security regression** - Restored exact pinning that was lost during v0.2.0 merge conflicts
+- **Range version vulnerabilities** - Eliminated potential for silent breaking changes via `^` version specifiers
+
 ## [0.2.0] - 2026-04-01
 
 ### Added
