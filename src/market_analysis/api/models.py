@@ -6,7 +6,7 @@ These models define the exact structure of API responses as agreed in the contra
 
 from datetime import datetime
 from datetime import date as date_type
-from typing import Any, Dict, List, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -50,17 +50,27 @@ class EfficiencyMetrics(BaseModel):
     beta: Optional[float] = Field(None, description="Beta sensitivity")
 
 
+class BenchmarkDetail(BaseModel):
+    """Individual benchmark comparison."""
+    accumulated: Optional[float] = Field(None, description="Accumulated return")
+    vs_fund: Optional[float] = Field(None, description="Difference vs fund in basis points")
+    estimated: Optional[float] = Field(None, description="Estimated return (for CDB/Poupanca)")
+
+
 class BenchmarkComparison(BaseModel):
     """Benchmark comparison data."""
-    cdi: Optional[float] = Field(None, description="CDI benchmark return")
-    selic: Optional[float] = Field(None, description="SELIC benchmark return")
-    ipca: Optional[float] = Field(None, description="IPCA benchmark return")
+    cdi: Optional[BenchmarkDetail] = Field(None, description="CDI benchmark")
+    selic: Optional[BenchmarkDetail] = Field(None, description="SELIC benchmark")
+    ipca: Optional[BenchmarkDetail] = Field(None, description="IPCA benchmark")
+    cdb: Optional[BenchmarkDetail] = Field(None, description="CDB estimate")
+    poupanca: Optional[BenchmarkDetail] = Field(None, description="Poupanca estimate")
 
 
 class MarketContext(BaseModel):
     """Market context information."""
-    status: str = Field(..., description="Market status")
-    last_updated: datetime = Field(..., description="Last update time")
+    trend_30d: Optional[str] = Field(None, description="30-day trend direction")
+    shareholders: Optional[int] = Field(None, description="Current number of shareholders")
+    equity_millions: Optional[float] = Field(None, description="Total equity in millions BRL")
 
 
 class PerformanceResponse(BaseModel):
