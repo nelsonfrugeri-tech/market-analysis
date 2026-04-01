@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+#### Backend REST API (FastAPI)
+- **6 REST endpoints** with Swagger/OpenAPI documentation
+  - `GET /api/v1/funds` - List available funds
+  - `GET /api/v1/funds/{cnpj}/performance` - Fund performance metrics
+  - `GET /api/v1/funds/{cnpj}/daily` - Daily time series data
+  - `GET /api/v1/funds/{cnpj}/explanations` - Metric explanations
+  - `GET /api/v1/health` - Health check endpoint
+  - `POST /api/v1/collect` - Trigger data collection
+- **Pydantic models** for type-safe validation
+- **CORS support** for localhost:3000 frontend
+- **Async/sync integration** with existing CLI backend
+- **Dynamic query parameters** for filtering and date ranges
+- **Error handling** for data collection failures
+- **Service layer architecture** separating API logic
+
 #### Frontend Web Dashboard
 - **Next.js 16.2.2 + React 19.2.4** complete dashboard implementation
 - **TypeScript strict mode** with zero `any` types for type safety
