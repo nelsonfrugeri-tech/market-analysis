@@ -1,7 +1,7 @@
 # Market Analysis Platform - Development Automation
 # Usage: make <command>
 
-.PHONY: help install test lint run build clean dev setup compile compile-backend compile-frontend
+.PHONY: help install test lint run build clean dev setup compile compile-backend compile-frontend kill-dev
 
 # Default target
 help:
@@ -39,6 +39,7 @@ help:
 	@echo "  make run-backend    - Start FastAPI server only"
 	@echo "  make run-frontend   - Start Next.js dev server only"
 	@echo "  make run-cli        - Run CLI analysis tool"
+	@echo "  make kill-dev       - Stop all development processes"
 	@echo ""
 	@echo "🗄️ Database:"
 	@echo "  make db-init        - Initialize SQLite database"
@@ -129,7 +130,7 @@ compile-frontend:
 
 dev: run
 
-run:
+run: kill-dev
 	@echo "🚀 Starting development servers..."
 	@echo "Backend: http://localhost:8000"
 	@echo "Frontend: http://localhost:3001"
@@ -140,6 +141,16 @@ run:
 	 make run-backend & \
 	 make run-frontend & \
 	 wait
+
+kill-dev:
+	@echo "🧹 Cleaning up running processes..."
+	@pkill -f "uvicorn" || true
+	@pkill -f "next dev" || true
+	@pkill -f "make dev" || true
+	@lsof -ti :8000 | xargs -r kill -9 2>/dev/null || true
+	@lsof -ti :3001 | xargs -r kill -9 2>/dev/null || true
+	@sleep 1
+	@echo "✅ Ports 8000 and 3001 cleaned!"
 
 run-backend:
 	@echo "🐍 Starting FastAPI server..."
