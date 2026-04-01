@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-04-01
 
+### Security
+#### Frontend Dependencies
+- **Exact version pinning** - All dependencies now use exact versions (no `^` ranges) to prevent automatic updates with potential vulnerabilities
+- **Security audit complete** - Researched and validated all dependencies for LTS status, stability, and security:
+  - [@radix-ui/react-icons](https://security.snyk.io/package/npm/%40radix-ui%2Freact-icons): 1.3.2 - No known vulnerabilities
+  - [@tanstack/react-query](https://security.snyk.io/package/npm/@tanstack/react-query): 5.96.1 - Clean security scan
+  - [recharts](https://security.snyk.io/package/npm/recharts): 3.8.1 - No risks detected, 14M+ weekly downloads
+  - [TailwindCSS](https://tailwindcss.com/blog/tailwindcss-v4): 4.2.2 - Latest stable v4 release
+  - [TypeScript](https://devblogs.microsoft.com/typescript/): 6.0.2 - Latest stable release
+  - [Vitest](https://github.com/vitest-dev/vitest/releases): 4.1.2 - Recent security fixes included
+  - [ESLint](https://eslint.org/blog/2024/04/eslint-v9.0.0-released/): 9.39.4 - Healthy maintenance status
+- **Zero vulnerabilities** - npm audit reports 0 vulnerabilities after dependency updates
+- **Peer dependency compatibility** - Resolved all peer dependency conflicts while maintaining exact versions
+
 ### Added
 
 #### Backend REST API (FastAPI)
