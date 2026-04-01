@@ -1,7 +1,7 @@
 # Market Analysis Platform - Development Automation
 # Usage: make <command>
 
-.PHONY: help install test lint run build clean dev setup
+.PHONY: help install test lint run build clean dev setup compile compile-backend compile-frontend
 
 # Default target
 help:
@@ -28,6 +28,11 @@ help:
 	@echo "  make lint-backend   - Run ruff + mypy on Python code"
 	@echo "  make lint-frontend  - Run Biome on TypeScript code"
 	@echo "  make format         - Format all code (auto-fix)"
+	@echo ""
+	@echo "🏗️ Build & Compile:"
+	@echo "  make compile        - Build production version (backend + frontend)"
+	@echo "  make compile-backend - Build Python application"
+	@echo "  make compile-frontend - Build Next.js for production"
 	@echo ""
 	@echo "🏃 Running:"
 	@echo "  make run            - Start both backend and frontend"
@@ -104,6 +109,21 @@ format:
 	@.venv/bin/python -m ruff format src/ tests/
 	@cd frontend && npm run format
 	@echo "✅ Code formatting completed!"
+
+# ==================== BUILD & COMPILE ====================
+
+compile: compile-backend compile-frontend
+	@echo "✅ Production build completed!"
+
+compile-backend:
+	@echo "🏗️ Building Python application..."
+	@.venv/bin/python -m compileall src/market_analysis/
+	@echo "✅ Backend build completed!"
+
+compile-frontend:
+	@echo "🏗️ Building Next.js for production..."
+	@cd frontend && npm run build
+	@echo "✅ Frontend build completed!"
 
 # ==================== DEVELOPMENT SERVERS ====================
 
