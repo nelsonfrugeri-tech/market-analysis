@@ -22,15 +22,56 @@ class FundSummary(BaseModel):
     status: str = Field(..., description="Fund status (active/inactive)")
 
 
+class PeriodInfo(BaseModel):
+    """Analysis period details."""
+    start: date_type = Field(..., description="Start date")
+    end: date_type = Field(..., description="End date")
+    days: int = Field(..., description="Number of days analyzed")
+
+
+class PerformanceMetrics(BaseModel):
+    """Fund performance metrics."""
+    return_pct: Optional[float] = Field(None, description="Return percentage")
+    nav_start: Optional[float] = Field(None, description="NAV at start")
+    nav_end: Optional[float] = Field(None, description="NAV at end")
+
+
+class RiskMetrics(BaseModel):
+    """Risk metrics."""
+    volatility: Optional[float] = Field(None, description="Annualized volatility")
+    sharpe_ratio: Optional[float] = Field(None, description="Sharpe ratio")
+    max_drawdown: Optional[float] = Field(None, description="Maximum drawdown")
+    var_95: Optional[float] = Field(None, description="Value at Risk 95%")
+
+
+class EfficiencyMetrics(BaseModel):
+    """Risk-adjusted efficiency metrics."""
+    alpha: Optional[float] = Field(None, description="Alpha vs benchmark")
+    beta: Optional[float] = Field(None, description="Beta sensitivity")
+
+
+class BenchmarkComparison(BaseModel):
+    """Benchmark comparison data."""
+    cdi: Optional[float] = Field(None, description="CDI benchmark return")
+    selic: Optional[float] = Field(None, description="SELIC benchmark return")
+    ipca: Optional[float] = Field(None, description="IPCA benchmark return")
+
+
+class MarketContext(BaseModel):
+    """Market context information."""
+    status: str = Field(..., description="Market status")
+    last_updated: datetime = Field(..., description="Last update time")
+
+
 class PerformanceResponse(BaseModel):
     """Complete performance metrics response."""
     fund: FundSummary
-    period: Dict[str, Any] = Field(..., description="Analysis period info")
-    performance: Dict[str, float] = Field(..., description="Return metrics")
-    risk: Dict[str, float] = Field(..., description="Risk metrics")
-    efficiency: Dict[str, float] = Field(..., description="Risk-adjusted metrics")
-    benchmarks: Dict[str, Any] = Field(..., description="Benchmark comparisons")
-    market: Dict[str, Any] = Field(..., description="Market context")
+    period: PeriodInfo = Field(..., description="Analysis period info")
+    performance: PerformanceMetrics = Field(..., description="Return metrics")
+    risk: RiskMetrics = Field(..., description="Risk metrics")
+    efficiency: EfficiencyMetrics = Field(..., description="Risk-adjusted metrics")
+    benchmarks: BenchmarkComparison = Field(..., description="Benchmark comparisons")
+    market: MarketContext = Field(..., description="Market context")
     updated_at: datetime = Field(..., description="Response timestamp")
 
 
